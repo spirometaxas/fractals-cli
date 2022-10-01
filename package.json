@@ -1,0 +1,46 @@
+{
+  "name": "fractals-cli",
+  "version": "0.0.1",
+  "description": "Print fractals to the console!",
+  "main": "./src/index.js",
+  "bin": {
+    "fractals-cli": "./src/cli.js"
+  },
+  "files": [
+    "src"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/spirometaxas/fractals-cli.git"
+  },
+  "homepage": "https://spirometaxas.com/projects/fractals-cli",
+  "scripts": {
+    "cli": "node ./src/cli.js"
+  },
+  "author": {
+    "name": "Spiro Metaxas",
+    "url": "https://spirometaxas.com"
+  },
+  "license": "MIT",
+  "keywords": [
+    "fractal",
+    "fractals",
+    "fractals-cli",
+    "cli",
+    "console",
+    "terminal",
+    "shell",
+    "unicode"
+  ],
+  "dependencies": {
+    "hexaflake-cli": "^1.2.0",
+    "koch-antisnowflake-cli": "^1.2.0",
+    "koch-snowflake-cli": "^1.2.0",
+    "sierpinski-carpet-cli": "^1.1.2",
+    "sierpinski-hexagon-cli": "^1.2.0",
+    "sierpinski-triangle-cli": "^1.2.3",
+    "t-square-cli": "^1.1.0",
+    "triflake-cli": "^1.2.0",
+    "vicsek-fractal-cli": "^1.1.1"
+  }
+}
