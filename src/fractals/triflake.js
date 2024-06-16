@@ -5,14 +5,13 @@ const { Utils } = require('../utils');
 class Triflake {
 
     CONFIG = {
-        NAME: 'Triflake',
-        KEY: 'triflake',
         MIN_N: 0,
-        MODES: {},
+        MODE_OPTIONS: {},
     }
 
     constructor() {
-        this.CONFIG.MODES[Modes.SHAPES] = {
+        this.CONFIG.MODES = [ Modes.SHAPES ];
+        this.CONFIG.MODE_OPTIONS[Modes.SHAPES] = {
             SIZE: true,
             ROTATIONS: [ Rotations.STANDARD, Rotations.FLIP ],
             CHARACTER: true,
@@ -61,7 +60,7 @@ class Triflake {
             size = config.size;
         }
 
-        let rotate = config !== undefined && this.CONFIG.MODES[Modes.SHAPES].ROTATIONS.includes(config.rotate) ? config.rotate : this.CONFIG.MODES[Modes.SHAPES].ROTATIONS[0];
+        let rotate = config !== undefined && this.CONFIG.MODE_OPTIONS[Modes.SHAPES].ROTATIONS.includes(config.rotate) ? config.rotate : this.CONFIG.MODE_OPTIONS[Modes.SHAPES].ROTATIONS[0];
 
         const triflakeBoard = Utils.createBoard(this._getWidth(size), this._getHeight(size));
         const antiSnowflakeBoard = new KochAntiSnowflake().create(n, { size: size, rotate: rotate });

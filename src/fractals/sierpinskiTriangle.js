@@ -4,14 +4,13 @@ const { Utils } = require('../utils');
 class SierpinskiTriangle {
 
     CONFIG = {
-        NAME: 'Sierpinski Triangle',
-        KEY: 'sierpinski_triangle',
         MIN_N: 0,
-        MODES: {},
+        MODE_OPTIONS: {},
     }
 
     constructor() {
-        this.CONFIG.MODES[Modes.SHAPES] = {
+        this.CONFIG.MODES = [ Modes.SHAPES ];
+        this.CONFIG.MODE_OPTIONS[Modes.SHAPES] = {
             SIZE: true,
             INVERSE: true,
             ROTATIONS: [ Rotations.STANDARD, Rotations.FLIP ],
@@ -115,7 +114,7 @@ class SierpinskiTriangle {
         }
 
         let inverse = config !== undefined && config.inverse === true;
-        let rotate = config !== undefined && this.CONFIG.MODES[Modes.SHAPES].ROTATIONS.includes(config.rotate) ? config.rotate : this.CONFIG.MODES[Modes.SHAPES].ROTATIONS[0];
+        let rotate = config !== undefined && this.CONFIG.MODE_OPTIONS[Modes.SHAPES].ROTATIONS.includes(config.rotate) ? config.rotate : this.CONFIG.MODE_OPTIONS[Modes.SHAPES].ROTATIONS[0];
 
         let board = Utils.createBoard(this._getWidth(size), this._getHeight(size));
         this._sierpinski(n, size, board, rotate, inverse);

@@ -1,20 +1,19 @@
 const { SierpinskiHexagon } = require('./sierpinskiHexagon');
-const { Modes, Shapes, SPACE } = require('../constants');
+const { Modes, Shapes } = require('../constants');
 const { Utils } = require('../utils');
 
 class KochSnowflake {
 
     CONFIG = {
-        NAME: 'Koch Snowflake',
-        KEY: 'koch_snowflake',
         MIN_N: 0,
-        MODES: {},
+        MODE_OPTIONS: {},
     }
 
     MARKER = '*'
 
     constructor() {
-        this.CONFIG.MODES[Modes.SHAPES] = {
+        this.CONFIG.MODES = [ Modes.SHAPES ];
+        this.CONFIG.MODE_OPTIONS[Modes.SHAPES] = {
             SIZE: true,
             CHARACTER: true,
         };
@@ -82,7 +81,7 @@ class KochSnowflake {
 
     _isRowEmpty(row) {
         for (let i = 0; i < row.length; i++) {
-            if (row[i] !== SPACE) {
+            if (row[i] !== Shapes.SPACE) {
                 return false;
             }
         }
@@ -94,7 +93,7 @@ class KochSnowflake {
         for (let i = 0; i < board.length; i++) {
             let currentBuffer = 0;
             for (let j = 0; j < board[i].length; j++) {
-                if (board[i][j] === SPACE) {
+                if (board[i][j] === Shapes.SPACE) {
                     currentBuffer++;
                 } else {
                     break;
@@ -112,7 +111,7 @@ class KochSnowflake {
         for (let i = 0; i < board.length; i++) {
             let currentBuffer = 0;
             for (let j = 0; j < board[i].length; j++) {
-                if (board[i][board[i].length - j - 1] === SPACE) {
+                if (board[i][board[i].length - j - 1] === Shapes.SPACE) {
                     currentBuffer++;
                 } else {
                     break;
@@ -170,7 +169,7 @@ class KochSnowflake {
             return false;
         }
 
-        if (!(snowflakeMaskBoard[newPoint.y][newPoint.x] === SPACE && hexagonBoard[newPoint.y][newPoint.x] === SPACE)) {
+        if (!(snowflakeMaskBoard[newPoint.y][newPoint.x] === Shapes.SPACE && hexagonBoard[newPoint.y][newPoint.x] === Shapes.SPACE)) {
             return false;
         }
 
@@ -182,7 +181,7 @@ class KochSnowflake {
             return false;
         }
 
-        return hexagonBoard[newPoint.y][newPoint.x] !== SPACE;
+        return hexagonBoard[newPoint.y][newPoint.x] !== Shapes.SPACE;
     }
 
     _queueContains(queue, point) {

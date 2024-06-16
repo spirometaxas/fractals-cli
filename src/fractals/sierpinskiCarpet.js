@@ -4,19 +4,18 @@ const { Utils } = require('../utils');
 class SierpinskiCarpet {
 
     CONFIG = {
-        NAME: 'Sierpinski Carpet',
-        KEY: 'sierpinski_carpet',
         MIN_N: 0,
-        MODES: {},
+        MODE_OPTIONS: {},
     }
 
     constructor() {
-        this.CONFIG.MODES[Modes.BLOCKS] = {
+        this.CONFIG.MODES = [ Modes.BLOCKS, Modes.LINES ];
+        this.CONFIG.MODE_OPTIONS[Modes.BLOCKS] = {
             SIZE: true,
             INVERSE: true,
             CHARACTER: true,
         };
-        this.CONFIG.MODES[Modes.LINES] = {
+        this.CONFIG.MODE_OPTIONS[Modes.LINES] = {
             SIZE: true,
             LINE_TYPES: [ LineTypes.STANDARD, LineTypes.BOLD, LineTypes.DOUBLE ],
         };

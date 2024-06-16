@@ -1,18 +1,17 @@
 const { KochSnowflake } = require('./kochSnowflake');
-const { Modes, Shapes, Rotations, SPACE } = require('../constants');
+const { Modes, Shapes, Rotations } = require('../constants');
 const { Utils } = require('../utils');
 
 class KochAntiSnowflake {
 
     CONFIG = {
-        NAME: 'Koch Anti-Snowflake',
-        KEY: 'koch_antisnowflake',
         MIN_N: 0,
-        MODES: {},
+        MODE_OPTIONS: {},
     }
 
     constructor() {
-        this.CONFIG.MODES[Modes.SHAPES] = {
+        this.CONFIG.MODES = [ Modes.SHAPES ];
+        this.CONFIG.MODE_OPTIONS[Modes.SHAPES] = {
             SIZE: true,
             ROTATIONS: [ Rotations.STANDARD, Rotations.FLIP ],
             CHARACTER: true,
@@ -75,8 +74,8 @@ class KochAntiSnowflake {
         const snowflakeTopLength = parseInt(snowflakeBoard.length / 4);
         for (let i = 0; i < snowflakeTopLength; i++) {
             for (let j = 0; j < snowflakeBoard[i].length; j++) {
-                if (snowflakeBoard[snowflakeTopLength - i - 1][j] !== SPACE) {
-                    triangleBoard[i][j] = SPACE;
+                if (snowflakeBoard[snowflakeTopLength - i - 1][j] !== Shapes.SPACE) {
+                    triangleBoard[i][j] = Shapes.SPACE;
                 }
             }
         }
@@ -88,8 +87,8 @@ class KochAntiSnowflake {
 
         for (let i = 0; i < triangleBoard.length; i++) {
             for (let j = 0; j < snowflakeSideLength; j++) {
-                if (snowflakeBoard[snowflakeBoard.length - i - 1][snowflakeSideLength + j + 1] !== SPACE) {
-                    triangleBoard[i][j] = SPACE;
+                if (snowflakeBoard[snowflakeBoard.length - i - 1][snowflakeSideLength + j + 1] !== Shapes.SPACE) {
+                    triangleBoard[i][j] = Shapes.SPACE;
                 }
             }
         }
@@ -101,8 +100,8 @@ class KochAntiSnowflake {
 
         for (let i = 0; i < triangleBoard.length; i++) {
             for (let j = 0; j < snowflakeSideLength; j++) {
-                if (snowflakeBoard[snowflakeBoard.length - i - 1][j] !== SPACE) {
-                    triangleBoard[i][snowflakeSideLength + j + 1] = SPACE;
+                if (snowflakeBoard[snowflakeBoard.length - i - 1][j] !== Shapes.SPACE) {
+                    triangleBoard[i][snowflakeSideLength + j + 1] = Shapes.SPACE;
                 }
             }
         }
@@ -112,8 +111,8 @@ class KochAntiSnowflake {
         const snowflakeBottomLength = parseInt(snowflakeBoard.length / 4);
         for (let i = 0; i < snowflakeBottomLength; i++) {
             for (let j = 0; j < snowflakeBoard[i].length; j++) {
-                if (snowflakeBoard[snowflakeBoard.length - snowflakeBottomLength + i][j] !== SPACE) {
-                    triangleBoard[triangleBoard.length - i - 1][j] = SPACE; 
+                if (snowflakeBoard[snowflakeBoard.length - snowflakeBottomLength + i][j] !== Shapes.SPACE) {
+                    triangleBoard[triangleBoard.length - i - 1][j] = Shapes.SPACE; 
                 }
             }
         }
@@ -125,8 +124,8 @@ class KochAntiSnowflake {
 
         for (let i = 0; i < triangleBoard.length; i++) {
             for (let j = 0; j < snowflakeSideLength; j++) {
-                if (snowflakeBoard[i][snowflakeSideLength + j + 1] !== SPACE) {
-                    triangleBoard[triangleBoard.length - i - 1][j] = SPACE;
+                if (snowflakeBoard[i][snowflakeSideLength + j + 1] !== Shapes.SPACE) {
+                    triangleBoard[triangleBoard.length - i - 1][j] = Shapes.SPACE;
                 }
             }
         }
@@ -138,8 +137,8 @@ class KochAntiSnowflake {
 
         for (let i = 0; i < triangleBoard.length; i++) {
             for (let j = 0; j < snowflakeSideLength; j++) {
-                if (snowflakeBoard[i][j] !== SPACE) {
-                    triangleBoard[triangleBoard.length - i - 1][snowflakeSideLength + j + 1] = SPACE;
+                if (snowflakeBoard[i][j] !== Shapes.SPACE) {
+                    triangleBoard[triangleBoard.length - i - 1][snowflakeSideLength + j + 1] = Shapes.SPACE;
                 }
             }
         }
@@ -155,7 +154,7 @@ class KochAntiSnowflake {
             size = config.size;
         }
 
-        let rotate = config !== undefined && this.CONFIG.MODES[Modes.SHAPES].ROTATIONS.includes(config.rotate) ? config.rotate : this.CONFIG.MODES[Modes.SHAPES].ROTATIONS[0];
+        let rotate = config !== undefined && this.CONFIG.MODE_OPTIONS[Modes.SHAPES].ROTATIONS.includes(config.rotate) ? config.rotate : this.CONFIG.MODE_OPTIONS[Modes.SHAPES].ROTATIONS[0];
 
         const triangleBoard = Utils.createBoard(this._getWidth(size), this._getHeight(size));
         if (rotate === Rotations.FLIP) {

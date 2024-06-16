@@ -1,4 +1,4 @@
-const { SPACE } = require('./constants');
+const { Shapes } = require('./constants');
 
 class Utils {
 
@@ -7,7 +7,7 @@ class Utils {
         for (let i = 0; i < h; i++) {
             let row = [];
             for (let j = 0; j < w; j++) {
-                row.push(SPACE);
+                row.push(Shapes.SPACE);
             }
             board.push(row);
         }

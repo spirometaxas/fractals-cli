@@ -4,14 +4,13 @@ const { Utils } = require('../utils');
 class Hexaflake {
 
     CONFIG = {
-        NAME: 'Hexaflake',
-        KEY: 'hexaflake',
         MIN_N: 0,
-        MODES: {},
+        MODE_OPTIONS: {},
     }
 
     constructor() {
-        this.CONFIG.MODES[Modes.SHAPES] = {
+        this.CONFIG.MODES = [ Modes.SHAPES ];
+        this.CONFIG.MODE_OPTIONS[Modes.SHAPES] = {
             SIZE: true,
             CHARACTER: true,
         };

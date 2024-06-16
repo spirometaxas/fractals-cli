@@ -1,14 +1,20 @@
 #!/usr/bin/env node
-const fractals = require('./index.js');
+const { App } = require('./app.js');
+const { version } = require('../package.json');
+
+const MODES = {
+    APP:     'APP',
+    DISPLAY: 'DISPLAY',
+};
 
 const printUsage = function(showIntro) {
     if (showIntro) {
-        console.log('\n Print the fractals to the console!');
+        console.log('\n An interactive fractal viewing app for the console!');
     }
     console.log('\n' + 
                 ' Usage:\n' + 
                 '   $ fractals-cli <name> <n>\n' + 
-                '   $ fractals-cli <name> <n> <size>\n' + 
+                '   $ fractals-cli <name> <n> [options]\n' + 
                 '\n' + 
                 ' Supported Names:\n' + 
                 '   sierpinski-triangle, sierpinski-carpet, sierpinski-hexagon,\n' +
@@ -22,107 +28,61 @@ const printUsage = function(showIntro) {
                 '   --character=<character>  Draw using 1 specific character\n');
 }
 
-const getFlags = function(params) {
-    let flags = [];
-    if (params) {
-        for (let i = 0; i < params.length; i++) {
-            if (params[i].startsWith('-')) {
-                flags.push(params[i]);
-            }
-        }
-    }
-    return flags;
-}
-
-const getValues = function(params) {
-    let values = [];
-    if (params) {
-        for (let i = 0; i < params.length; i++) {
-            if (!params[i].startsWith('-')) {
-                values.push(params[i]);
-            }
-        }
-    }
-    return values;
-}
-
-const drawInverse = function(flags) {
+const getMode = function(flags) {
+    const prefix = '--mode=';
     for (let i = 0; i < flags.length; i++) {
-        if (flags[i] && (flags[i].toLowerCase() === '-i' || flags[i].toLowerCase() === '--inverse')) {
+        if (flags[i] && flags[i].toLowerCase().startsWith(prefix)) {
+            const modeString = flags[i].substring(prefix.length);
+            if (modeString !== undefined && MODES[modeString.toUpperCase()] !== undefined) {
+                return MODES[modeString.toUpperCase()];
+            }
+        }
+    }
+    return MODES.APP;  // Default to APP
+}
+
+const isHelp = function(flags) {
+    for (let i = 0; i < flags.length; i++) {
+        if (flags[i] && (flags[i].toLowerCase() === '--help' || flags[i].toLowerCase() === '-h')) {
             return true;
         }
     }
     return false;
 }
 
-const drawBlocks = function(flags) {
+const isVersion = function(flags, mode) {
+    if (mode !== MODES.APP) {
+        return false;
+    }
     for (let i = 0; i < flags.length; i++) {
-        if (flags[i] && flags[i].toLowerCase() === '-b' || flags[i].toLowerCase() === '--blocks') {
+        if (flags[i] && (flags[i].toLowerCase() === '--version' || flags[i].toLowerCase() === '-v')) {
             return true;
         }
     }
     return false;
 }
 
-const getCharacter = function(flags) {
-    for (let i = 0; i < flags.length; i++) {
-        if (flags[i] && flags[i].toLowerCase().startsWith('--character=')) {
-            const character = flags[i].substring(12);
-            if (character) {
-                if (character.length === 1) {
-                    return character;
-                } else {
-                    console.log('\n Warning: Please provide just 1 character.  Example: --character=*');
-                }
-            } else {
-                console.log('\n Warning: Please provide 1 character.  Example: --character=*');
-            }
-        }
-    }
-    return undefined;
-}
-
-const drawDiagonal = function(flags) {
-    for (let i = 0; i < flags.length; i++) {
-        if (flags[i] && (flags[i].toLowerCase() === '--diagonal' || flags[i].toLowerCase() === '-d')) {
-            return true;
-        }
-    }
-    return false;
-}
+var mode = MODES.APP;
 
 if (process.argv.length > 2) {
     const params = process.argv.slice(2);
-    const values = getValues(params);
-    const flags = getFlags(params);
+    mode = getMode(params);
 
-    const name = values[0];
-    if (!name || !fractals.SUPPORTED_NAMES.includes(name.toLowerCase())) {
-        console.log('\n <name> should be a supported fractal name');
-        printUsage(false);
-        return;
+    if (isHelp(params)) {
+        printUsage();
+        process.exit();
+    } else if (isVersion(params, mode)) {
+        console.log('\n ' + getVersion() + '\n');
+        process.exit();
+    } else if (mode === MODES.DISPLAY) {
+        console.log(' TODO: Implement');
+        process.exit();
     }
-    if (values[1] && !isNaN(values[1]) && parseInt(values[1]) >= 0) {
-        var n = parseInt(values[1]);
-        var s = undefined;
-        if (values[2]) {
-            if (!isNaN(values[2]) && parseInt(values[2]) >= n) {
-                s = parseInt(values[2]);
-            } else {
-                console.log('\n <size> should be a number greater than or equal to <n>');
-                printUsage(false);
-            }
-        } else {
-            s = n;
-        }
-        if (n !== undefined && s !== undefined) {
-            const character = drawBlocks(flags) ? '█' : getCharacter(flags);
-            console.log(fractals.create(name, n, { size: s, inverse: drawInverse(flags), character: character, diagonal: drawDiagonal(flags) }));
-        }
-    } else {
-        console.log('\n <n> should be a number greater than or equal to 0');
-        printUsage(false);
-    }
-} else {
-    printUsage(true);
 }
+
+if (!process.stdout.isTTY) {
+    console.log(' Error: Interactive mode is only supported within a terminal screen.');
+    process.exit();
+}
+
+new App().start({});

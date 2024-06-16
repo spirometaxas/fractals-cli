@@ -4,14 +4,13 @@ const { Utils } = require('../utils');
 class SierpinskiHexagon {
 
     CONFIG = {
-        NAME: 'Sierpinski Hexagon',
-        KEY: 'sierpinski_hexagon',
         MIN_N: 0,
-        MODES: {},
+        MODE_OPTIONS: {},
     }
 
     constructor() {
-        this.CONFIG.MODES[Modes.SHAPES] = {
+        this.CONFIG.MODES = [ Modes.SHAPES ];
+        this.CONFIG.MODE_OPTIONS[Modes.SHAPES] = {
             SIZE: true,
             CHARACTER: true,
         };
