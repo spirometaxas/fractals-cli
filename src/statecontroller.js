@@ -1,3 +1,7 @@
+const { Fractal } = require('./Fractal');
+const { FractalKeys, FractalData, PanelKeys, Modes } = require('./constants');
+
+// Fractals
 const { SierpinskiTriangle } = require('./fractals/SierpinskiTriangle');
 const { SierpinskiCarpet } = require('./fractals/SierpinskiCarpet');
 const { SierpinskiHexagon } = require('./fractals/SierpinskiHexagon');
@@ -5,96 +9,10 @@ const { Hexaflake } = require('./fractals/hexaflake');
 const { KochSnowflake } = require('./fractals/kochSnowflake');
 const { KochAntiSnowflake } = require('./fractals/kochAntiSnowflake');
 const { Triflake } = require('./fractals/triflake');
-const { FractalKeys, FractalData, PanelKeys } = require('./constants');
 
 class SelectModes {
     static VIEWER = 'viewer';
     static PANEL  = 'panel';
-}
-
-class Fractal {
-
-    constructor(key, impl) {
-        this.name = FractalData[key].name;
-        this.description = FractalData[key].description;
-        this.impl = impl;
-        this.config = {};
-
-        this._initConfig();
-    }
-
-
-    _initConfig() {
-        this.config.N_STEP = 3;  // TODO: Compute dynamically
-        this.config.MODE = this.impl.CONFIG.MODES[0];
-
-        for (let modeKey of this.impl.CONFIG.MODES.slice().reverse()) {
-            if (this.supportsStep(modeKey)) {
-                this.config.STEP = this.config.N_STEP;
-            }
-            if (this.supportsInverse(modeKey)) {
-                this.config.INVERSE = false;
-            }
-            if (this.supportsRotations(modeKey)) {
-                this.config.ROTATION = this.impl.CONFIG.MODE_OPTIONS[modeKey].ROTATIONS[0];
-            }
-        }
-    }
-
-    getMinN() {
-        return this.impl.CONFIG.MIN_N;
-    }
-
-    getSupportedModes() {
-        return this.impl.CONFIG.MODES;
-    }
-
-    supportsStep(modeKey) {
-        if (!modeKey) {
-            modeKey = this.config.MODE;
-        }
-        return this.impl.CONFIG.MODE_OPTIONS[modeKey] && this.impl.CONFIG.MODE_OPTIONS[modeKey].SIZE;
-    }
-
-    supportsInverse(modeKey) {
-        if (!modeKey) {
-            modeKey = this.config.MODE;
-        }
-        return this.impl.CONFIG.MODE_OPTIONS[modeKey] && this.impl.CONFIG.MODE_OPTIONS[modeKey].INVERSE;
-    }
-
-    supportsRotations(modeKey) {
-        if (!modeKey) {
-            modeKey = this.config.MODE;
-        }
-        return this.impl.CONFIG.MODE_OPTIONS[modeKey] && this.impl.CONFIG.MODE_OPTIONS[modeKey].ROTATIONS;
-    }
-
-    setRotation(rotationKey) {
-        if (this.getSupportedRotations().includes(rotationKey)) {
-            this.config.ROTATION = rotationKey;
-        }
-    }
-
-    getSupportedRotations(modeKey) {
-        if (!modeKey) {
-            modeKey = this.config.MODE;
-        }
-        if (this.impl.CONFIG.MODE_OPTIONS[modeKey]) {
-            return this.impl.CONFIG.MODE_OPTIONS[modeKey].ROTATIONS;
-        }
-    }
-
-    setMode(modeKey) {
-        if (this.getSupportedModes().includes(modeKey)) {
-            this.config.MODE = modeKey;
-        }
-    }
-
-    supportsMultipleModes() {
-        return this.getSupportedModes().length > 1;
-    }
-
 }
 
 class StateController {
@@ -127,7 +45,23 @@ class StateController {
         this.fractals[FractalKeys.KOCH_ANTISNOWFLAKE]  = new Fractal(FractalKeys.KOCH_ANTISNOWFLAKE,  new KochAntiSnowflake());
         this.fractals[FractalKeys.TRIFLAKE]            = new Fractal(FractalKeys.TRIFLAKE,            new Triflake());
 
+        this._initViewController();
         this._updatePanels(true);
+    }
+
+    _initViewController() {
+        for (let key of Object.values(FractalKeys)) {
+            let fractal = this.fractals[key];
+            while (this.viewController.doesFractalFit({ rows: fractal.impl._getHeight(fractal.nStep + 1), columns: fractal.impl._getWidth(fractal.nStep + 1) })) {
+                fractal.nStep++;
+
+                if (this.fractals[this.currentFractalKey].supportsStep()) {
+                    fractal.step = fractal.nStep;
+                }
+            }
+        }
+
+        this._onFractalConfigChange();
     }
 
     _updatePanels(init=false) {
@@ -142,10 +76,10 @@ class StateController {
         }
         
         // N Panel
-        this.panels[PanelKeys.N_STEP].setValue(fractalConfig.config.N_STEP);
+        this.panels[PanelKeys.N_STEP].setValue(fractalConfig.nStep);
 
         // Mode Panel
-        let currentFractalModeKey = fractalConfig.config.MODE;
+        let currentFractalModeKey = fractalConfig.mode;
         this.panels[PanelKeys.MODE].updateOptionsByKey(fractalConfig.getSupportedModes(), currentFractalModeKey);
         this.panels[PanelKeys.MODE].visible = fractalConfig.supportsMultipleModes();
         if (init) {
@@ -156,7 +90,7 @@ class StateController {
 
         // Step Panel
         if (fractalConfig.supportsStep(currentFractalModeKey)) {
-            this.panels[PanelKeys.STEP].setValue(fractalConfig.config.STEP);
+            this.panels[PanelKeys.STEP].setValue(fractalConfig.step);
             this.panels[PanelKeys.STEP].visible = true;
         } else {
             this.panels[PanelKeys.STEP].visible = false;
@@ -164,7 +98,7 @@ class StateController {
 
         // Inverse Panel
         if (fractalConfig.supportsInverse(currentFractalModeKey)) {
-            this.panels[PanelKeys.INVERSE].setValue(fractalConfig.config.INVERSE);
+            this.panels[PanelKeys.INVERSE].setValue(fractalConfig.inverse);
             this.panels[PanelKeys.INVERSE].visible = true;
         } else {
             this.panels[PanelKeys.INVERSE].visible = false;
@@ -172,7 +106,7 @@ class StateController {
 
         // Rotations Panel
         if (fractalConfig.supportsRotations(currentFractalModeKey)) {
-            this.panels[PanelKeys.ROTATION].updateOptionsByKey(fractalConfig.getSupportedRotations(currentFractalModeKey), fractalConfig.config.ROTATION);
+            this.panels[PanelKeys.ROTATION].updateOptionsByKey(fractalConfig.getSupportedRotations(currentFractalModeKey), fractalConfig.rotation);
             this.panels[PanelKeys.ROTATION].visible = true;
         } else {
             this.panels[PanelKeys.ROTATION].updateOptionsByKey([], undefined);
@@ -188,20 +122,38 @@ class StateController {
     _onFractalChange(newFractalKey) {
         this.currentFractalKey = newFractalKey;
         this._updatePanels();
+        this._onFractalConfigChange();
     }
 
     _onRotationChange(newRotationKey) {
         this.fractals[this.currentFractalKey].setRotation(newRotationKey);
+        this._onFractalConfigChange();
     }
 
     _onModeChange(newModeKey) {
         this.fractals[this.currentFractalKey].setMode(newModeKey);
+        this._updatePanels();
+        this._onFractalConfigChange();
+    }
+
+    _onFractalConfigChange(reset=true) {
+        let currentFractal = this.fractals[this.currentFractalKey];
+
+        let fractalConfig = {
+            step: currentFractal.step,
+            outline: currentFractal.mode === Modes.LINES,
+            inverse: currentFractal.inverse,
+            rotate: currentFractal.rotation,
+        };
+        this.viewController.setFractal(currentFractal.impl.create(currentFractal.nStep, fractalConfig), currentFractal.mode, currentFractal.getDefaultDisplay(), reset);
     }
 
     processUp() {
         if (this.currentFocus.type === SelectModes.PANEL) {
             this.panels[this.currentFocus.id].processUp();
             return true;
+        } else if (this.currentFocus.type === SelectModes.VIEWER) {
+            return this.viewController.scrollUp();
         }
         return false;
     }
@@ -210,16 +162,22 @@ class StateController {
         if (this.currentFocus.type === SelectModes.PANEL) {
             this.panels[this.currentFocus.id].processDown();
             return true;
+        } else if (this.currentFocus.type === SelectModes.VIEWER) {
+            return this.viewController.scrollDown();
         }
         return false;
     }
 
     processLeft() {
-
+        if (this.currentFocus.type === SelectModes.VIEWER) {
+            return this.viewController.scrollLeft();
+        }
     }
 
     processRight() {
-        
+        if (this.currentFocus.type === SelectModes.VIEWER) {
+            return this.viewController.scrollRight();
+        }
     }
 
     processEnter() {
@@ -243,17 +201,22 @@ class StateController {
         if (this.currentFocus.type === SelectModes.VIEWER) {
             let currentFractal = this.fractals[this.currentFractalKey];
             if (isUpperCase) {
-                if (currentFractal.config.N_STEP <= currentFractal.getMinN()) {
+                if (currentFractal.nStep <= currentFractal.getMinN()) {
                     return false;
                 }
-                currentFractal.config.N_STEP--;
+                currentFractal.nStep--;
             } else {
-                currentFractal.config.N_STEP++;
+                currentFractal.nStep++;
             }
-            currentFractal.config.STEP = currentFractal.config.N_STEP;
 
-            this.panels[PanelKeys.N_STEP].setValue(currentFractal.config.N_STEP);
-            this.panels[PanelKeys.STEP].setValue(currentFractal.config.STEP);
+            this.panels[PanelKeys.N_STEP].setValue(currentFractal.nStep);
+
+            if (this.fractals[this.currentFractalKey].supportsStep()) {
+                currentFractal.step = currentFractal.nStep;
+                this.panels[PanelKeys.STEP].setValue(currentFractal.step);
+            }
+
+            this._onFractalConfigChange();
             return true;
         }
         return false;
@@ -268,17 +231,19 @@ class StateController {
             let currentFractal = this.fractals[this.currentFractalKey];
             if (currentFractal.supportsStep()) {
                 if (isUpperCase) {
-                    if (currentFractal.config.STEP <= currentFractal.getMinN()) {
+                    if (currentFractal.step <= currentFractal.getMinN()) {
                         return false;
                     }
-                    currentFractal.config.STEP--;
+                    currentFractal.step--;
                 } else {
-                    if (currentFractal.config.STEP < currentFractal.config.N_STEP) {
-                        currentFractal.config.STEP++;
+                    if (currentFractal.step < currentFractal.nStep) {
+                        currentFractal.step++;
                     }
                 }
-                this.panels[PanelKeys.STEP].setValue(currentFractal.config.STEP);
+                this.panels[PanelKeys.STEP].setValue(currentFractal.step);
             }
+
+            this._onFractalConfigChange(false);
             return true;
         }
         return false;
@@ -292,8 +257,10 @@ class StateController {
         if (this.currentFocus.type === SelectModes.VIEWER) {
             let currentFractal = this.fractals[this.currentFractalKey];
             if (currentFractal.supportsInverse()) {
-                currentFractal.config.INVERSE = !currentFractal.config.INVERSE;
-                this.panels[PanelKeys.INVERSE].setValue(currentFractal.config.INVERSE);
+                currentFractal.inverse = !currentFractal.inverse;
+                this.panels[PanelKeys.INVERSE].setValue(currentFractal.inverse);
+
+                this._onFractalConfigChange(false);
                 return true;
             }
         }
@@ -331,6 +298,10 @@ class StateController {
             return true;
         }
         return false;
+    }
+
+    updateScrollingOnResize() {
+        this.viewController.updateScrollingOnResize();
     }
 
     getRenderConfig() {

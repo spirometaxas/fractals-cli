@@ -1,4 +1,4 @@
-const { Shapes } = require('./constants');
+const { Shapes, Rotations, VerticalAlign, HorizontalAlign } = require('./constants');
 
 class Utils {
 
@@ -12,6 +12,56 @@ class Utils {
             board.push(row);
         }
         return board;
+    }
+
+    static rotateDefaultX(defaultX, defaultY, rotation) {
+        if (rotation === Rotations.LEFT) {
+            if (defaultY === VerticalAlign.BOTTOM) {
+                return HorizontalAlign.RIGHT;
+            } else if (defaultY === VerticalAlign.CENTER) {
+                return HorizontalAlign.CENTER;
+            } else if (defaultY === VerticalAlign.TOP) {
+                return HorizontalAlign.LEFT;
+            }
+        } else if (rotation === Rotations.RIGHT) {
+            if (defaultY === VerticalAlign.BOTTOM) {
+                return HorizontalAlign.LEFT;
+            } else if (defaultY === VerticalAlign.CENTER) {
+                return HorizontalAlign.CENTER;
+            } else if (defaultY === VerticalAlign.TOP) {
+                return HorizontalAlign.RIGHT;
+            }
+        }
+        return defaultX;
+    }
+
+    static rotateDefaultY(defaultX, defaultY, rotation) {
+        if (rotation === Rotations.LEFT) {
+            if (defaultX === HorizontalAlign.LEFT) {
+                return VerticalAlign.BOTTOM;
+            } else if (defaultX === HorizontalAlign.CENTER) {
+                return VerticalAlign.CENTER;
+            } else if (defaultX === HorizontalAlign.RIGHT) {
+                return VerticalAlign.TOP;
+            }
+        } else if (rotation === Rotations.RIGHT) {
+            if (defaultX === HorizontalAlign.LEFT) {
+                return VerticalAlign.TOP;
+            } else if (defaultX === HorizontalAlign.CENTER) {
+                return VerticalAlign.CENTER;
+            } else if (defaultX === HorizontalAlign.RIGHT) {
+                return VerticalAlign.BOTTOM;
+            }
+        } else if (rotation === Rotations.FLIP) {
+            if (defaultY === VerticalAlign.BOTTOM) {
+                return VerticalAlign.TOP;
+            } else if (defaultY === VerticalAlign.CENTER) {
+                return VerticalAlign.CENTER;
+            } else if (defaultY === VerticalAlign.TOP) {
+                return VerticalAlign.BOTTOM;
+            }
+        }
+        return defaultY;
     }
 }
 

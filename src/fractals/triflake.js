@@ -1,5 +1,5 @@
 const { KochAntiSnowflake } = require('./kochAntiSnowflake');
-const { Modes, Shapes, Rotations } = require('../constants');
+const { Modes, Shapes, Rotations, VerticalAlign, HorizontalAlign } = require('../constants');
 const { Utils } = require('../utils');
 
 class Triflake {
@@ -7,6 +7,11 @@ class Triflake {
     CONFIG = {
         MIN_N: 0,
         MODE_OPTIONS: {},
+    }
+
+    DISPLAY = {
+        DEFAULT_X: HorizontalAlign.LEFT,
+        DEFAULT_Y: VerticalAlign.BOTTOM,
     }
 
     constructor() {
@@ -55,24 +60,24 @@ class Triflake {
             return [];
         }
       
-        let size = n;
-        if (config && config.size && config.size > n) {
-            size = config.size;
+        let step = n;
+        if (config && config.step !== undefined && config.step >= this.CONFIG.MIN_N && config.step <= n) {
+            step = config.step;
         }
 
         let rotate = config !== undefined && this.CONFIG.MODE_OPTIONS[Modes.SHAPES].ROTATIONS.includes(config.rotate) ? config.rotate : this.CONFIG.MODE_OPTIONS[Modes.SHAPES].ROTATIONS[0];
 
-        const triflakeBoard = Utils.createBoard(this._getWidth(size), this._getHeight(size));
-        const antiSnowflakeBoard = new KochAntiSnowflake().create(n, { size: size, rotate: rotate });
+        const triflakeBoard = Utils.createBoard(this._getWidth(n), this._getHeight(n));
+        const antiSnowflakeBoard = new KochAntiSnowflake().create(n, { step: step, rotate: rotate });
 
         if (rotate === Rotations.FLIP) {
-            this._insertAntiSnowflake({ x: 0, y: parseInt(this._getHeight(size) / 2) }, antiSnowflakeBoard, triflakeBoard);
-            this._insertAntiSnowflake({ x: parseInt(this._getWidth(size) / 2) + 1 , y: parseInt(this._getHeight(size) / 2) }, antiSnowflakeBoard, triflakeBoard);
-            this._insertAntiSnowflake({ x: parseInt(this._getWidth(size) / 4) + 1 , y: 0 }, antiSnowflakeBoard, triflakeBoard);
+            this._insertAntiSnowflake({ x: 0, y: parseInt(this._getHeight(n) / 2) }, antiSnowflakeBoard, triflakeBoard);
+            this._insertAntiSnowflake({ x: parseInt(this._getWidth(n) / 2) + 1 , y: parseInt(this._getHeight(n) / 2) }, antiSnowflakeBoard, triflakeBoard);
+            this._insertAntiSnowflake({ x: parseInt(this._getWidth(n) / 4) + 1 , y: 0 }, antiSnowflakeBoard, triflakeBoard);
         } else {
             this._insertAntiSnowflake({ x: 0, y: 0 }, antiSnowflakeBoard, triflakeBoard);
-            this._insertAntiSnowflake({ x: parseInt(this._getWidth(size) / 2) + 1 , y: 0 }, antiSnowflakeBoard, triflakeBoard);
-            this._insertAntiSnowflake({ x: parseInt(this._getWidth(size) / 4) + 1 , y: parseInt(this._getHeight(size) / 2) }, antiSnowflakeBoard, triflakeBoard);
+            this._insertAntiSnowflake({ x: parseInt(this._getWidth(n) / 2) + 1 , y: 0 }, antiSnowflakeBoard, triflakeBoard);
+            this._insertAntiSnowflake({ x: parseInt(this._getWidth(n) / 4) + 1 , y: parseInt(this._getHeight(n) / 2) }, antiSnowflakeBoard, triflakeBoard);
         }
 
         return triflakeBoard.reverse();

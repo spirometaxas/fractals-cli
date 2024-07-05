@@ -8,6 +8,8 @@ class Layout {
 
     static PANEL_WIDTH = 36;
     static PANEL_LEFT_BUFFER = 1;
+    static PANEL_RIGHT_BUFFER = 1;
+    static VIEWER_RIGHT_BUFFER = 1;
     static MIN_PANEL_OPEN_HEIGHT = 11;
 
     static TITLE = [
@@ -18,6 +20,7 @@ class Layout {
     ];
 
     static MIN_TITLE_WINDOW_HEIGHT = Layout.MIN_PANEL_OPEN_HEIGHT + Layout.TITLE.length + 2;
+    static FULL_PANEL_WIDTH = Layout.PANEL_LEFT_BUFFER + Layout.PANEL_WIDTH + Layout.PANEL_RIGHT_BUFFER;
 }
 
 class Dashboard {
@@ -25,16 +28,10 @@ class Dashboard {
     BG_COLOR = Colors.BLACK;
     FG_COLOR = Colors.WHITE;
 
-    constructor() {
-        this.board = [];
-    }
-
-    setViewController(viewController) {
+    constructor(viewController, panels) {
         this.viewController = viewController;
-    }
-
-    setPanels(panels) {
         this.panels = panels;
+        this.board = [];
     }
 
     _createBoard(w, h) {
@@ -46,6 +43,7 @@ class Dashboard {
                     character: Shapes.SPACE,
                     config: { 
                         backgroundColor: this.BG_COLOR.BG,
+                        foregroundColor: this.FG_COLOR.FG,
                     },
                 });
             }
@@ -280,7 +278,7 @@ class Dashboard {
             this._insertCharacter({ x: pos.x + Layout.PANEL_WIDTH - 1, y: pos.y + i }, '│');
         }
 
-        // TODO: Add content
+        // TODO: Add Controls content
 
         return height;
     }
@@ -308,18 +306,23 @@ class Dashboard {
 
     _draw() {
         // TODO: Generate Optimized
-        return Renderer.generateStandard(this.board);
-        // return Renderer.generateOptimized(this.board);
+        // return Renderer.generateStandard(this.board);
+        return Renderer.generateOptimized(this.board);
     }
 
     render(config) {
-        let rows = process.stdout.rows;
-        let columns = process.stdout.columns;
-        this.board = this._createBoard(columns, rows);
-        if (rows >= Layout.MIN_TITLE_WINDOW_HEIGHT) {
+        let dimensions = { rows: process.stdout.rows, columns: process.stdout.columns };
+        this.board = this._createBoard(dimensions.columns, dimensions.rows);
+        if (dimensions.rows >= Layout.MIN_TITLE_WINDOW_HEIGHT) {
             this._addTitle();
         }
-        this._addPanels(config, rows);
+        this._addPanels(config, dimensions.rows);
+        this.viewController.drawFractal(this.board, { 
+            x: Layout.FULL_PANEL_WIDTH,
+            y: 0, 
+            rows: dimensions.rows, 
+            columns: dimensions.columns - Layout.FULL_PANEL_WIDTH - Layout.VIEWER_RIGHT_BUFFER,
+        }, {});
         return this._draw();
     }
 

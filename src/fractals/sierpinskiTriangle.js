@@ -1,4 +1,4 @@
-const { Rotations, Modes, Shapes } = require('../constants');
+const { Rotations, Modes, Shapes, VerticalAlign, HorizontalAlign } = require('../constants');
 const { Utils } = require('../utils');
 
 class SierpinskiTriangle {
@@ -6,6 +6,11 @@ class SierpinskiTriangle {
     CONFIG = {
         MIN_N: 0,
         MODE_OPTIONS: {},
+    }
+
+    DISPLAY = {
+        DEFAULT_X: HorizontalAlign.LEFT,
+        DEFAULT_Y: VerticalAlign.BOTTOM,
     }
 
     constructor() {
@@ -108,16 +113,16 @@ class SierpinskiTriangle {
             return [];
         }
 
-        let size = n;
-        if (config && config.size && config.size > n) {
-            size = config.size;
+        let step = n;
+        if (config && config.step !== undefined && config.step >= this.CONFIG.MIN_N && config.step <= n) {
+            step = config.step;
         }
 
         let inverse = config !== undefined && config.inverse === true;
         let rotate = config !== undefined && this.CONFIG.MODE_OPTIONS[Modes.SHAPES].ROTATIONS.includes(config.rotate) ? config.rotate : this.CONFIG.MODE_OPTIONS[Modes.SHAPES].ROTATIONS[0];
 
-        let board = Utils.createBoard(this._getWidth(size), this._getHeight(size));
-        this._sierpinski(n, size, board, rotate, inverse);
+        let board = Utils.createBoard(this._getWidth(n), this._getHeight(n));
+        this._sierpinski(step, n, board, rotate, inverse);
       
         return board.reverse();
     }

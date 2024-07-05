@@ -1,4 +1,4 @@
-const { Modes, Lines, LineTypes, Shapes } = require('../constants');
+const { Modes, Lines, LineTypes, Shapes, VerticalAlign, HorizontalAlign } = require('../constants');
 const { Utils } = require('../utils');
 
 class SierpinskiCarpet {
@@ -7,6 +7,12 @@ class SierpinskiCarpet {
         MIN_N: 0,
         MODE_OPTIONS: {},
     }
+
+    DISPLAY = {
+        DEFAULT_X: HorizontalAlign.LEFT,
+        DEFAULT_Y: VerticalAlign.BOTTOM,
+    }
+
 
     constructor() {
         this.CONFIG.MODES = [ Modes.BLOCKS, Modes.LINES ];
@@ -87,19 +93,19 @@ class SierpinskiCarpet {
             return [];
         }
     
-        let size = n;
-        if (config && config.size && config.size > n) {
-            size = config.size;
+        let step = n;
+        if (config && config.step !== undefined && config.step >= this.CONFIG.MIN_N && config.step <= n) {
+            step = config.step;
         }
 
         let inverse = config !== undefined && config.inverse === true;
         let outline = config !== undefined && config.outline === true;
     
 
-        let board = Utils.createBoard(this._getWidth(size) + (outline ? 1 : 0), this._getHeight(size) + (outline ? 1 : 0));
-        this._sierpinski(n, size, board, { x: parseInt(this._getWidth(size) / 2.0), y: parseInt(this._getHeight(size) / 2.0) }, inverse, outline);
+        let board = Utils.createBoard(this._getWidth(n) + (outline ? 1 : 0), this._getHeight(n) + (outline ? 1 : 0));
+        this._sierpinski(step, n, board, { x: parseInt(this._getWidth(n) / 2.0), y: parseInt(this._getHeight(n) / 2.0) }, inverse, outline);
         if (outline) {
-            this._drawSquareO(board, { x: parseInt(this._getWidth(size) / 2.0), y: parseInt(this._getHeight(size) / 2.0) }, size);
+            this._drawSquareO(board, { x: parseInt(this._getWidth(n) / 2.0), y: parseInt(this._getHeight(n) / 2.0) }, n);
         }
         return board.reverse();
     }

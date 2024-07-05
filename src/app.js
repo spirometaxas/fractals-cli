@@ -38,11 +38,8 @@ class App {
         let viewController = new ViewController();
         let panels = PanelManager.initPanels();
 
+        this.dashboard = new Dashboard(viewController, panels);
         this.stateController = new StateController(config, viewController, panels);
-
-        this.dashboard = new Dashboard();
-        this.dashboard.setViewController(viewController);
-        this.dashboard.setPanels(panels);
 
         process.stdin.setRawMode(true);
         process.stdin.resume();
@@ -113,6 +110,7 @@ class App {
         // On terminal resize
         process.on("SIGWINCH", () => {
             try {
+                this.stateController.updateScrollingOnResize();
                 this._draw(true);
                 process.stdout.write('\u001B[?25l');  // Hise cursor
             } catch(e) {

@@ -133,6 +133,18 @@ LineTypes = {
     DOUBLE:   'DOUBLE',
 }
 
+VerticalAlign = {
+    TOP:    'TOP',
+    CENTER: 'CENTER',
+    BOTTOM: 'BOTTOM',
+}
+
+HorizontalAlign = {
+    LEFT:   'LEFT',
+    CENTER: 'CENTER',
+    RIGHT:  'RIGHT',
+}
+
 Text = {
     FRACTAL: 'Fractal',
     FRACTAL_SHAPES: 'Fractal Shapes',
@@ -173,4 +185,6 @@ module.exports = {
     Lines: Lines,
     LineTypes: LineTypes,
     Text: Text,
+    VerticalAlign,
+    HorizontalAlign,
 }

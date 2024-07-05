@@ -1,5 +1,5 @@
 const { SierpinskiHexagon } = require('./sierpinskiHexagon');
-const { Modes, Shapes } = require('../constants');
+const { Modes, Shapes, VerticalAlign, HorizontalAlign } = require('../constants');
 const { Utils } = require('../utils');
 
 class KochSnowflake {
@@ -7,6 +7,11 @@ class KochSnowflake {
     CONFIG = {
         MIN_N: 0,
         MODE_OPTIONS: {},
+    }
+
+    DISPLAY = {
+        DEFAULT_X: HorizontalAlign.CENTER,
+        DEFAULT_Y: VerticalAlign.BOTTOM,
     }
 
     MARKER = '*'
@@ -242,20 +247,20 @@ class KochSnowflake {
             return [];
         }
       
-        let size = n;
-        if (config && config.size && config.size > n) {
-            size = config.size;
+        let step = n;
+        if (config && config.step !== undefined && config.step >= this.CONFIG.MIN_N && config.step <= n) {
+            step = config.step;
         }
 
-        if (n === 0) {
-            let triangleBoard = Utils.createBoard(this._getWidth(size), this._getHeight(size));
-            this._drawTriangle(triangleBoard, { x: parseInt(this._getWidth(size) / 2.0), y: parseInt(this._getHeight(size) / 4.0) }, size);
+        if (step === 0) {
+            let triangleBoard = Utils.createBoard(this._getWidth(n), this._getHeight(n));
+            this._drawTriangle(triangleBoard, { x: parseInt(this._getWidth(n) / 2.0), y: parseInt(this._getHeight(n) / 4.0) }, n);
             return triangleBoard.reverse();
         } else {
-            let hexagonBoard = new SierpinskiHexagon().create(n, { size: size });
+            let hexagonBoard = new SierpinskiHexagon().create(n, { step: step });
             let snowflakeMaskBoard = Utils.createBoard(hexagonBoard[0].length, hexagonBoard.length);
             this._findSnowflake(hexagonBoard, snowflakeMaskBoard);
-            this._trimBoard(snowflakeMaskBoard, size);
+            this._trimBoard(snowflakeMaskBoard, n);
             let maskBoard = this._createMaskBoard(snowflakeMaskBoard[0].length, snowflakeMaskBoard.length);
             this._applyMask(snowflakeMaskBoard, maskBoard);
             return snowflakeMaskBoard.reverse();

@@ -1,4 +1,4 @@
-const { Modes, Shapes } = require('../constants');
+const { Modes, Shapes, VerticalAlign, HorizontalAlign } = require('../constants');
 const { Utils } = require('../utils');
 
 class Hexaflake {
@@ -6,6 +6,11 @@ class Hexaflake {
     CONFIG = {
         MIN_N: 0,
         MODE_OPTIONS: {},
+    }
+
+    DISPLAY = {
+        DEFAULT_X: HorizontalAlign.CENTER,
+        DEFAULT_Y: VerticalAlign.BOTTOM,
     }
 
     constructor() {
@@ -27,7 +32,7 @@ class Hexaflake {
     }
 
     _getHeight(n) {
-         return Math.pow(3, n) * 2;
+        return Math.pow(3, n) * 2;
     }
 
     _drawHexagon(board, pos, size) {
@@ -81,13 +86,13 @@ class Hexaflake {
             return [];
         }
       
-        let size = n;
-        if (config && config.size && config.size > n) {
-            size = config.size;
+        let step = n;
+        if (config && config.step !== undefined && config.step >= this.CONFIG.MIN_N && config.step <= n) {
+            step = config.step;
         }
 
-        let board = Utils.createBoard(this._getWidth(size), this._getHeight(size));
-        this._hexaflake(n, size, board, { x: parseInt(this._getWidth(size) / 2.0), y: parseInt(this._getHeight(size) / 2.0) });
+        let board = Utils.createBoard(this._getWidth(n), this._getHeight(n));
+        this._hexaflake(step, n, board, { x: parseInt(this._getWidth(n) / 2.0), y: parseInt(this._getHeight(n) / 2.0) });
         return board.reverse();
     }
 

@@ -1,5 +1,5 @@
 const { KochSnowflake } = require('./kochSnowflake');
-const { Modes, Shapes, Rotations } = require('../constants');
+const { Modes, Shapes, Rotations, VerticalAlign, HorizontalAlign } = require('../constants');
 const { Utils } = require('../utils');
 
 class KochAntiSnowflake {
@@ -7,6 +7,11 @@ class KochAntiSnowflake {
     CONFIG = {
         MIN_N: 0,
         MODE_OPTIONS: {},
+    }
+
+    DISPLAY = {
+        DEFAULT_X: HorizontalAlign.LEFT,
+        DEFAULT_Y: VerticalAlign.BOTTOM,
     }
 
     constructor() {
@@ -149,22 +154,22 @@ class KochAntiSnowflake {
             return [];
         }
       
-        let size = n;
-        if (config && config.size && config.size > n) {
-            size = config.size;
+        let step = n;
+        if (config && config.step !== undefined && config.step >= this.CONFIG.MIN_N && config.step <= n) {
+            step = config.step;
         }
 
         let rotate = config !== undefined && this.CONFIG.MODE_OPTIONS[Modes.SHAPES].ROTATIONS.includes(config.rotate) ? config.rotate : this.CONFIG.MODE_OPTIONS[Modes.SHAPES].ROTATIONS[0];
 
-        const triangleBoard = Utils.createBoard(this._getWidth(size), this._getHeight(size));
+        const triangleBoard = Utils.createBoard(this._getWidth(n), this._getHeight(n));
         if (rotate === Rotations.FLIP) {
-            this._drawInverseTriangle(triangleBoard, { x: parseInt(this._getWidth(size) / 2.0), y: 0 }, size);
+            this._drawInverseTriangle(triangleBoard, { x: parseInt(this._getWidth(n) / 2.0), y: 0 }, n);
         } else {
-            this._drawTriangle(triangleBoard, { x: parseInt(this._getWidth(size) / 2.0), y: 0 }, size);
+            this._drawTriangle(triangleBoard, { x: parseInt(this._getWidth(n) / 2.0), y: 0 }, n);
         }
 
-        if (n > 0) {
-            const snowflakeBoard = new KochSnowflake().create(n, { size: size });
+        if (step > 0) {
+            const snowflakeBoard = new KochSnowflake().create(n, { step: step });
             if (rotate === Rotations.FLIP) {
                 this._cutSnowflakeBottom(triangleBoard, snowflakeBoard);
                 this._cutSnowflakeTopLeft(triangleBoard, snowflakeBoard);
