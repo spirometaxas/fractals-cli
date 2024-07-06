@@ -313,16 +313,15 @@ class Dashboard {
     render(config) {
         let dimensions = { rows: process.stdout.rows, columns: process.stdout.columns };
         this.board = this._createBoard(dimensions.columns, dimensions.rows);
-        if (dimensions.rows >= Layout.MIN_TITLE_WINDOW_HEIGHT) {
-            this._addTitle();
+
+        if (config.showPanels) {
+            if (dimensions.rows >= Layout.MIN_TITLE_WINDOW_HEIGHT) {
+                this._addTitle();
+            }
+            this._addPanels(config, dimensions.rows);
         }
-        this._addPanels(config, dimensions.rows);
-        this.viewController.drawFractal(this.board, { 
-            x: Layout.FULL_PANEL_WIDTH,
-            y: 0, 
-            rows: dimensions.rows, 
-            columns: dimensions.columns - Layout.FULL_PANEL_WIDTH - Layout.VIEWER_RIGHT_BUFFER,
-        }, {});
+
+        this.viewController.drawFractal(this.board, {}, config.showPanels);
         return this._draw();
     }
 

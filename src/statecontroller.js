@@ -35,6 +35,7 @@ class StateController {
         this.panels = panels;
 
         this.currentFocus = { type: SelectModes.VIEWER };
+        this.showPanels = true;
 
         // Fractal Shapes
         this.fractals[FractalKeys.SIERPINSKI_TRIANGLE] = new Fractal(FractalKeys.SIERPINSKI_TRIANGLE, new SierpinskiTriangle());
@@ -52,7 +53,7 @@ class StateController {
     _initViewController() {
         for (let key of Object.values(FractalKeys)) {
             let fractal = this.fractals[key];
-            while (this.viewController.doesFractalFit({ rows: fractal.impl._getHeight(fractal.nStep + 1), columns: fractal.impl._getWidth(fractal.nStep + 1) })) {
+            while (this.viewController.doesFractalFit({ rows: fractal.impl._getHeight(fractal.nStep + 1), columns: fractal.impl._getWidth(fractal.nStep + 1) }, this.showPanels)) {
                 fractal.nStep++;
 
                 if (this.fractals[this.currentFractalKey].supportsStep()) {
@@ -145,7 +146,12 @@ class StateController {
             inverse: currentFractal.inverse,
             rotate: currentFractal.rotation,
         };
-        this.viewController.setFractal(currentFractal.impl.create(currentFractal.nStep, fractalConfig), currentFractal.mode, currentFractal.getDefaultDisplay(), reset);
+        this.viewController.setFractal(
+            currentFractal.impl.create(currentFractal.nStep, fractalConfig), 
+            currentFractal.mode, 
+            currentFractal.getDefaultDisplay(), 
+            this.showPanels,
+            reset);
     }
 
     processUp() {
@@ -153,7 +159,7 @@ class StateController {
             this.panels[this.currentFocus.id].processUp();
             return true;
         } else if (this.currentFocus.type === SelectModes.VIEWER) {
-            return this.viewController.scrollUp();
+            return this.viewController.scrollUp(this.showPanels);
         }
         return false;
     }
@@ -163,20 +169,20 @@ class StateController {
             this.panels[this.currentFocus.id].processDown();
             return true;
         } else if (this.currentFocus.type === SelectModes.VIEWER) {
-            return this.viewController.scrollDown();
+            return this.viewController.scrollDown(this.showPanels);
         }
         return false;
     }
 
     processLeft() {
         if (this.currentFocus.type === SelectModes.VIEWER) {
-            return this.viewController.scrollLeft();
+            return this.viewController.scrollLeft(this.showPanels);
         }
     }
 
     processRight() {
         if (this.currentFocus.type === SelectModes.VIEWER) {
-            return this.viewController.scrollRight();
+            return this.viewController.scrollRight(this.showPanels);
         }
     }
 
@@ -291,6 +297,15 @@ class StateController {
         return false;
     }
 
+    processP() {
+        if (this.currentFocus.type === SelectModes.VIEWER) {
+            this.showPanels = !this.showPanels;
+            this.updateScrollingOnResize();
+            return true;
+        }
+        return false;
+    }
+
     processBack() {
         if (this.currentFocus.type === SelectModes.PANEL) {
             this.panels[this.currentFocus.id].processExit();
@@ -301,7 +316,7 @@ class StateController {
     }
 
     updateScrollingOnResize() {
-        this.viewController.updateScrollingOnResize();
+        this.viewController.updateScrollingOnResize(this.showPanels);
     }
 
     getRenderConfig() {
@@ -321,6 +336,7 @@ class StateController {
         return {
             panels: panels,
             openPanel: openPanel,
+            showPanels: this.showPanels,
         };
     }
 
