@@ -238,12 +238,15 @@ class StateController {
             if (currentFractal.supportsStep()) {
                 if (isUpperCase) {
                     if (currentFractal.step <= currentFractal.getMinN()) {
-                        return false;
+                        currentFractal.step = currentFractal.nStep;
+                    } else {
+                        currentFractal.step--;
                     }
-                    currentFractal.step--;
                 } else {
                     if (currentFractal.step < currentFractal.nStep) {
                         currentFractal.step++;
+                    } else {
+                        currentFractal.step = currentFractal.getMinN();
                     }
                 }
                 this.panels[PanelKeys.STEP].setValue(currentFractal.step);
