@@ -4,6 +4,7 @@ const { Utils } = require('./utils');
 class Fractal {
 
     constructor(key, impl) {
+        this.key = key;
         this.name = FractalData[key].name;
         this.description = FractalData[key].description;
         this.impl = impl;

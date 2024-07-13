@@ -1,5 +1,6 @@
 const { Fractal } = require('./Fractal');
 const { FractalKeys, FractalData, PanelKeys, Modes } = require('./constants');
+const { Cache } = require('./cache');
 
 // Fractals
 const { SierpinskiTriangle } = require('./fractals/SierpinskiTriangle');
@@ -33,6 +34,7 @@ class StateController {
     constructor(config, viewController, panels) {
         this.viewController = viewController;
         this.panels = panels;
+        this.cache = new Cache();
 
         this.currentFocus = { type: SelectModes.VIEWER };
         this.showPanels = true;
@@ -140,16 +142,31 @@ class StateController {
     _onFractalConfigChange(reset=true) {
         let currentFractal = this.fractals[this.currentFractalKey];
 
-        let fractalConfig = {
-            step: currentFractal.step,
-            outline: currentFractal.mode === Modes.LINES,
-            inverse: currentFractal.inverse,
-            rotate: currentFractal.rotation,
-        };
+        let cacheKey = Cache.createCacheKey(currentFractal);
+        let board = this.cache.get(cacheKey);
+
+        if (board) {
+            this.viewController.setFractal(
+                board,
+                currentFractal.mode, 
+                currentFractal.getDefaultDisplay(), 
+                this.showPanels,
+                reset);
+        } else {
+            let fractalConfig = {
+                step: currentFractal.step,
+                outline: currentFractal.mode === Modes.LINES,
+                inverse: currentFractal.inverse,
+                rotate: currentFractal.rotation,
+            };
+            board = currentFractal.impl.create(currentFractal.nStep, fractalConfig);
+            this.cache.put(cacheKey, board);
+        }
+
         this.viewController.setFractal(
-            currentFractal.impl.create(currentFractal.nStep, fractalConfig), 
+            board, 
             currentFractal.mode, 
-            currentFractal.getDefaultDisplay(), 
+            currentFractal.getDefaultDisplay(),
             this.showPanels,
             reset);
     }
