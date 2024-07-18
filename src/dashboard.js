@@ -1,7 +1,7 @@
 const { Utils } = require('./utils.js');
 const { Renderer } = require('./renderer.js');
 const { Colors } = require('./colors.js');
-const { Shapes, PanelKeys, Text } = require('./constants.js');
+const { Shapes, PanelKeys, ViewKeys, Text } = require('./constants.js');
 const { PanelType } = require('./panels.js');
 
 class Layout {
@@ -21,6 +21,22 @@ class Layout {
 
     static MIN_TITLE_WINDOW_HEIGHT = Layout.MIN_PANEL_OPEN_HEIGHT + Layout.TITLE.length + 2;
     static FULL_PANEL_WIDTH = Layout.PANEL_LEFT_BUFFER + Layout.PANEL_WIDTH + Layout.PANEL_RIGHT_BUFFER;
+
+    static LOADING_SMALL = [
+        'L O ▲ D I N G',
+    ];
+    static LOADING_MEDIUM = [
+        '      __       __            __  ',
+        ' |   /  \\  ▲  |  \\  |  |\\ | / __ ',
+        ' |__ \\__/ ▲ ▲ |__/  |  | \\| \\__| ',
+    ];
+    static LOADING_LARGE = [
+        '          ____              ____                   ____  ',
+        ' |       /    \\      ▲     |    \\    |   |\\   |   /      ',
+        ' |      /      \\    ▲ ▲    |     \\   |   | \\  |  /   ___ ',
+        ' |      \\      /   ▲   ▲   |     /   |   |  \\ |  \\     | ',
+        ' |____   \\____/   ▲ ▲ ▲ ▲  |____/    |   |   \\|   \\____| ',
+    ];
 }
 
 class Dashboard {
@@ -28,8 +44,9 @@ class Dashboard {
     BG_COLOR = Colors.BLACK;
     FG_COLOR = Colors.WHITE;
 
-    constructor(viewController, panels) {
+    constructor(viewController, loadingView, panels) {
         this.viewController = viewController;
+        this.loadingView = loadingView;
         this.panels = panels;
         this.board = [];
     }
@@ -321,7 +338,11 @@ class Dashboard {
             this._addPanels(config, dimensions.rows);
         }
 
-        this.viewController.drawFractal(this.board, {}, config.showPanels);
+        if (config.view === ViewKeys.FRACTAL) {
+            this.viewController.drawFractal(this.board, {}, config.showPanels);
+        } else if (config.view === ViewKeys.LOADING) {
+            this.loadingView.draw(this.board, config.showPanels);
+        }
         return this._draw();
     }
 

@@ -1,6 +1,7 @@
 const { Dashboard } = require('./dashboard.js');
 const { StateController } = require('./statecontroller.js');
 const { ViewController } = require('./viewcontroller.js');
+const { LoadingView } = require('./loadingview.js');
 const { PanelManager } = require('./panels.js');
 
 const KeyMap = {
@@ -37,9 +38,10 @@ class App {
 
     start(config) {
         let viewController = new ViewController();
+        let loadingView = new LoadingView();
         let panels = PanelManager.initPanels();
 
-        this.dashboard = new Dashboard(viewController, panels);
+        this.dashboard = new Dashboard(viewController, loadingView, panels);
         this.stateController = new StateController(config, viewController, panels);
 
         process.stdin.setRawMode(true);
@@ -55,6 +57,12 @@ class App {
         const renderConfig = this.stateController.getRenderConfig();
         this._clearScreen(full);
         process.stdout.write(this.dashboard.render(renderConfig));
+        if (this.stateController.isLoading()) {
+            this.stateController.getLoadingTask().run().then(() => {
+                this.stateController.clearLoadingTask();
+                this._draw(full);
+            });
+        }
     }
 
     _clearScreen(full) {
@@ -70,6 +78,8 @@ class App {
                 var handled = false;
                 if (key === KeyMap.CTRL_C || key === KeyMap.ESC) {
                     this.exit();
+                } else if (this.stateController.isLoading()) {
+                    return;  // Only allow exit during loading
                 } else if (key === KeyMap.UP) {
                     handled = this.stateController.processUp();
                 } else if (key === KeyMap.DOWN) {

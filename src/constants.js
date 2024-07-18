@@ -40,13 +40,18 @@ FractalData = {
 }
 
 PanelKeys = {
-    FRACTAL:  'FRACTAL',
-    N_STEP:   'N_STEP',
-    STEP:     'STEP',
-    MODE:     'MODE',
-    INVERSE:  'INVERSE',
-    ROTATION: 'ROTATION',
-    CONTROLS: 'CONTROLS',
+    FRACTAL:  'fractal',
+    N_STEP:   'n_step',
+    STEP:     'step',
+    MODE:     'mode',
+    INVERSE:  'inverse',
+    ROTATION: 'rotation',
+    CONTROLS: 'controls',
+}
+
+ViewKeys = {
+    FRACTAL: 'fractal',
+    LOADING: 'loading',
 }
 
 Rotations = {
@@ -179,6 +184,7 @@ module.exports = {
     FractalKeys: FractalKeys,
     FractalData: FractalData,
     PanelKeys: PanelKeys,
+    ViewKeys: ViewKeys,
     Rotations: Rotations,
     Modes: Modes,
     Shapes: Shapes,

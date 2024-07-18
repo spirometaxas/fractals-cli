@@ -1,5 +1,5 @@
 const { Fractal } = require('./Fractal');
-const { FractalKeys, FractalData, PanelKeys, Modes } = require('./constants');
+const { FractalKeys, FractalData, PanelKeys, ViewKeys, Modes } = require('./constants');
 const { Cache } = require('./cache');
 
 // Fractals
@@ -14,6 +14,42 @@ const { Triflake } = require('./fractals/triflake');
 class SelectModes {
     static VIEWER = 'viewer';
     static PANEL  = 'panel';
+}
+
+class GenerateFractalTask {
+
+    constructor(fractal, viewController, cache, showPanels, reset) {
+        this.fractal = fractal;
+        this.viewController = viewController;
+        this.cache = cache;
+        this.showPanels = showPanels;
+        this.reset = reset;
+    }
+
+    run() {
+        return new Promise((resolve, reject) => {
+            let fractalConfig = {
+                step: this.fractal.step,
+                outline: this.fractal.mode === Modes.LINES,
+                inverse: this.fractal.inverse,
+                rotate: this.fractal.rotation,
+            };
+            let board = this.fractal.impl.create(this.fractal.nStep, fractalConfig);
+
+            let cacheKey = Cache.createCacheKey(this.fractal);
+            this.cache.put(cacheKey, board);
+
+            this.viewController.setFractal(
+                board, 
+                this.fractal.mode, 
+                this.fractal.getDefaultDisplay(),
+                this.showPanels,
+                this.reset);
+
+            resolve();
+        });
+    }
+
 }
 
 class StateController {
@@ -35,6 +71,7 @@ class StateController {
         this.viewController = viewController;
         this.panels = panels;
         this.cache = new Cache();
+        this.loadingTask = undefined;
 
         this.currentFocus = { type: SelectModes.VIEWER };
         this.showPanels = true;
@@ -153,22 +190,20 @@ class StateController {
                 this.showPanels,
                 reset);
         } else {
-            let fractalConfig = {
-                step: currentFractal.step,
-                outline: currentFractal.mode === Modes.LINES,
-                inverse: currentFractal.inverse,
-                rotate: currentFractal.rotation,
-            };
-            board = currentFractal.impl.create(currentFractal.nStep, fractalConfig);
-            this.cache.put(cacheKey, board);
+            this.loadingTask = new GenerateFractalTask(currentFractal, this.viewController, this.cache, this.showPanels, reset);
         }
+    }
 
-        this.viewController.setFractal(
-            board, 
-            currentFractal.mode, 
-            currentFractal.getDefaultDisplay(),
-            this.showPanels,
-            reset);
+    isLoading() {
+        return this.loadingTask !== undefined;
+    }
+
+    getLoadingTask() {
+        return this.loadingTask;
+    }
+
+    clearLoadingTask() {
+        this.loadingTask = undefined;
     }
 
     processUp() {
@@ -357,6 +392,7 @@ class StateController {
             panels: panels,
             openPanel: openPanel,
             showPanels: this.showPanels,
+            view: this.isLoading() ? ViewKeys.LOADING : ViewKeys.FRACTAL,
         };
     }
 
