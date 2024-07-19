@@ -18,9 +18,9 @@ class SelectModes {
 
 class GenerateFractalTask {
 
-    constructor(fractal, viewController, cache, showPanels, reset) {
+    constructor(fractal, fractalView, cache, showPanels, reset) {
         this.fractal = fractal;
-        this.viewController = viewController;
+        this.fractalView = fractalView;
         this.cache = cache;
         this.showPanels = showPanels;
         this.reset = reset;
@@ -39,7 +39,7 @@ class GenerateFractalTask {
             let cacheKey = Cache.createCacheKey(this.fractal);
             this.cache.put(cacheKey, board);
 
-            this.viewController.setFractal(
+            this.fractalView.setFractal(
                 board, 
                 this.fractal.mode, 
                 this.fractal.getDefaultDisplay(),
@@ -67,8 +67,8 @@ class StateController {
     fractals = {};
     currentFractalKey = FractalKeys.SIERPINSKI_TRIANGLE;  // Default to Sierpinski Triangle
 
-    constructor(config, viewController, panels) {
-        this.viewController = viewController;
+    constructor(config, views, panels) {
+        this.views = views;
         this.panels = panels;
         this.cache = new Cache();
         this.loadingTask = undefined;
@@ -92,7 +92,7 @@ class StateController {
     _initViewController() {
         for (let key of Object.values(FractalKeys)) {
             let fractal = this.fractals[key];
-            while (this.viewController.doesFractalFit({ rows: fractal.impl._getHeight(fractal.nStep + 1), columns: fractal.impl._getWidth(fractal.nStep + 1) }, this.showPanels)) {
+            while (this.views[ViewKeys.FRACTAL].doesFractalFit({ rows: fractal.impl._getHeight(fractal.nStep + 1), columns: fractal.impl._getWidth(fractal.nStep + 1) }, this.showPanels)) {
                 fractal.nStep++;
 
                 if (this.fractals[this.currentFractalKey].supportsStep()) {
@@ -183,14 +183,14 @@ class StateController {
         let board = this.cache.get(cacheKey);
 
         if (board) {
-            this.viewController.setFractal(
+            this.views[ViewKeys.FRACTAL].setFractal(
                 board,
                 currentFractal.mode, 
                 currentFractal.getDefaultDisplay(), 
                 this.showPanels,
                 reset);
         } else {
-            this.loadingTask = new GenerateFractalTask(currentFractal, this.viewController, this.cache, this.showPanels, reset);
+            this.loadingTask = new GenerateFractalTask(currentFractal, this.views[ViewKeys.FRACTAL], this.cache, this.showPanels, reset);
         }
     }
 
@@ -211,7 +211,7 @@ class StateController {
             this.panels[this.currentFocus.id].processUp();
             return true;
         } else if (this.currentFocus.type === SelectModes.VIEWER) {
-            return this.viewController.scrollUp(this.showPanels);
+            return this.views[ViewKeys.FRACTAL].scrollUp(this.showPanels);
         }
         return false;
     }
@@ -221,20 +221,20 @@ class StateController {
             this.panels[this.currentFocus.id].processDown();
             return true;
         } else if (this.currentFocus.type === SelectModes.VIEWER) {
-            return this.viewController.scrollDown(this.showPanels);
+            return this.views[ViewKeys.FRACTAL].scrollDown(this.showPanels);
         }
         return false;
     }
 
     processLeft() {
         if (this.currentFocus.type === SelectModes.VIEWER) {
-            return this.viewController.scrollLeft(this.showPanels);
+            return this.views[ViewKeys.FRACTAL].scrollLeft(this.showPanels);
         }
     }
 
     processRight() {
         if (this.currentFocus.type === SelectModes.VIEWER) {
-            return this.viewController.scrollRight(this.showPanels);
+            return this.views[ViewKeys.FRACTAL].scrollRight(this.showPanels);
         }
     }
 
@@ -371,7 +371,7 @@ class StateController {
     }
 
     updateScrollingOnResize() {
-        this.viewController.updateScrollingOnResize(this.showPanels);
+        this.views[ViewKeys.FRACTAL].updateScrollingOnResize(this.showPanels);
     }
 
     getRenderConfig() {

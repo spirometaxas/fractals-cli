@@ -1,7 +1,6 @@
 const { Dashboard } = require('./dashboard.js');
 const { StateController } = require('./statecontroller.js');
 const { ViewController } = require('./viewcontroller.js');
-const { LoadingView } = require('./loadingview.js');
 const { PanelManager } = require('./panels.js');
 
 const KeyMap = {
@@ -38,11 +37,10 @@ class App {
 
     start(config) {
         let viewController = new ViewController();
-        let loadingView = new LoadingView();
         let panels = PanelManager.initPanels();
 
-        this.dashboard = new Dashboard(viewController, loadingView, panels);
-        this.stateController = new StateController(config, viewController, panels);
+        this.dashboard = new Dashboard(viewController.getViews(), panels);
+        this.stateController = new StateController(config, viewController.getViews(), panels);
 
         process.stdin.setRawMode(true);
         process.stdin.resume();

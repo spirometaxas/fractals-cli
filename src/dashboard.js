@@ -44,9 +44,8 @@ class Dashboard {
     BG_COLOR = Colors.BLACK;
     FG_COLOR = Colors.WHITE;
 
-    constructor(viewController, loadingView, panels) {
-        this.viewController = viewController;
-        this.loadingView = loadingView;
+    constructor(views, panels) {
+        this.views = views;
         this.panels = panels;
         this.board = [];
     }
@@ -338,11 +337,7 @@ class Dashboard {
             this._addPanels(config, dimensions.rows);
         }
 
-        if (config.view === ViewKeys.FRACTAL) {
-            this.viewController.drawFractal(this.board, {}, config.showPanels);
-        } else if (config.view === ViewKeys.LOADING) {
-            this.loadingView.draw(this.board, config.showPanels);
-        }
+        this.views[config.view].draw(this.board, {}, config.showPanels);
         return this._draw();
     }
 
