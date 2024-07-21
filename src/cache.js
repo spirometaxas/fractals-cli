@@ -12,24 +12,24 @@ class Cache {
         this.cache[key] = board;
     }
 
-    static createCacheKey(fractal) {
-        let key = fractal.key;
-        key += '_' + fractal.nStep;
+    static createCacheKey(fractalKey, nStep, config) {
+        let key = fractalKey;
+        key += '_' + nStep;
 
-        if (fractal.step !== undefined) {
-            key += '_' + fractal.step;
+        if (config.step !== undefined) {
+            key += '_' + config.step;
         }
 
-        if (fractal.mode !== undefined) {
-            key += '_' + fractal.mode;
+        if (config.mode !== undefined) {
+            key += '_' + config.mode;
         }
 
-        if (fractal.inverse !== undefined) {
-            key += '_' + fractal.inverse;
+        if (config.inverse !== undefined) {
+            key += '_' + config.inverse;
         }
 
-        if (fractal.rotation !== undefined) {
-            key += '_' + fractal.rotation;
+        if (config.rotation !== undefined) {
+            key += '_' + config.rotation;
         }
 
         return key;

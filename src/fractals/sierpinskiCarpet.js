@@ -99,7 +99,7 @@ class SierpinskiCarpet {
         }
 
         let inverse = config !== undefined && config.inverse === true;
-        let outline = config !== undefined && config.outline === true;
+        let outline = config !== undefined && config.mode === Modes.LINES;
     
 
         let board = Utils.createBoard(this._getWidth(n) + (outline ? 1 : 0), this._getHeight(n) + (outline ? 1 : 0));

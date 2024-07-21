@@ -1,15 +1,7 @@
 const { Fractal } = require('./Fractal');
 const { FractalKeys, FractalData, PanelKeys, ViewKeys, Modes } = require('./constants');
 const { Cache } = require('./cache');
-
-// Fractals
-const { SierpinskiTriangle } = require('./fractals/SierpinskiTriangle');
-const { SierpinskiCarpet } = require('./fractals/SierpinskiCarpet');
-const { SierpinskiHexagon } = require('./fractals/SierpinskiHexagon');
-const { Hexaflake } = require('./fractals/hexaflake');
-const { KochSnowflake } = require('./fractals/kochSnowflake');
-const { KochAntiSnowflake } = require('./fractals/kochAntiSnowflake');
-const { Triflake } = require('./fractals/triflake');
+const { Worker } = require('worker_threads');
 
 class SelectModes {
     static VIEWER = 'viewer';
@@ -18,36 +10,23 @@ class SelectModes {
 
 class GenerateFractalTask {
 
-    constructor(fractal, fractalView, cache, showPanels, reset) {
-        this.fractal = fractal;
-        this.fractalView = fractalView;
-        this.cache = cache;
-        this.showPanels = showPanels;
+    workerThread = undefined;
+    data = undefined;
+
+    constructor(fractalKey, nStep, config, cacheKey, reset) {
+        this.fractalKey = fractalKey;
+        this.nStep = nStep;
+        this.config = config;
+        this.cacheKey = cacheKey;
         this.reset = reset;
     }
 
-    run() {
-        return new Promise((resolve, reject) => {
-            let fractalConfig = {
-                step: this.fractal.step,
-                outline: this.fractal.mode === Modes.LINES,
-                inverse: this.fractal.inverse,
-                rotate: this.fractal.rotation,
-            };
-            let board = this.fractal.impl.create(this.fractal.nStep, fractalConfig);
-
-            let cacheKey = Cache.createCacheKey(this.fractal);
-            this.cache.put(cacheKey, board);
-
-            this.fractalView.setFractal(
-                board, 
-                this.fractal.mode, 
-                this.fractal.getDefaultDisplay(),
-                this.showPanels,
-                this.reset);
-
-            resolve();
-        });
+    getWorkerData() {
+        return {
+            fractalKey: this.fractalKey,
+            nStep: this.nStep,
+            config: this.config,
+        };
     }
 
 }
@@ -77,13 +56,13 @@ class StateController {
         this.showPanels = true;
 
         // Fractal Shapes
-        this.fractals[FractalKeys.SIERPINSKI_TRIANGLE] = new Fractal(FractalKeys.SIERPINSKI_TRIANGLE, new SierpinskiTriangle());
-        this.fractals[FractalKeys.SIERPINSKI_CARPET]   = new Fractal(FractalKeys.SIERPINSKI_CARPET,   new SierpinskiCarpet());
-        this.fractals[FractalKeys.SIERPINSKI_HEXAGON]  = new Fractal(FractalKeys.SIERPINSKI_HEXAGON,  new SierpinskiHexagon());
-        this.fractals[FractalKeys.HEXAFLAKE]           = new Fractal(FractalKeys.HEXAFLAKE,           new Hexaflake());
-        this.fractals[FractalKeys.KOCH_SNOWFLAKE]      = new Fractal(FractalKeys.KOCH_SNOWFLAKE,      new KochSnowflake());
-        this.fractals[FractalKeys.KOCH_ANTISNOWFLAKE]  = new Fractal(FractalKeys.KOCH_ANTISNOWFLAKE,  new KochAntiSnowflake());
-        this.fractals[FractalKeys.TRIFLAKE]            = new Fractal(FractalKeys.TRIFLAKE,            new Triflake());
+        this.fractals[FractalKeys.SIERPINSKI_TRIANGLE] = new Fractal(FractalKeys.SIERPINSKI_TRIANGLE);
+        this.fractals[FractalKeys.SIERPINSKI_CARPET]   = new Fractal(FractalKeys.SIERPINSKI_CARPET);
+        this.fractals[FractalKeys.SIERPINSKI_HEXAGON]  = new Fractal(FractalKeys.SIERPINSKI_HEXAGON);
+        this.fractals[FractalKeys.HEXAFLAKE]           = new Fractal(FractalKeys.HEXAFLAKE);
+        this.fractals[FractalKeys.KOCH_SNOWFLAKE]      = new Fractal(FractalKeys.KOCH_SNOWFLAKE);
+        this.fractals[FractalKeys.KOCH_ANTISNOWFLAKE]  = new Fractal(FractalKeys.KOCH_ANTISNOWFLAKE);
+        this.fractals[FractalKeys.TRIFLAKE]            = new Fractal(FractalKeys.TRIFLAKE);
 
         this._initViewController();
         this._updatePanels(true);
@@ -179,7 +158,7 @@ class StateController {
     _onFractalConfigChange(reset=true) {
         let currentFractal = this.fractals[this.currentFractalKey];
 
-        let cacheKey = Cache.createCacheKey(currentFractal);
+        let cacheKey = Cache.createCacheKey(currentFractal.key, currentFractal.nStep, currentFractal.getConfig());
         let board = this.cache.get(cacheKey);
 
         if (board) {
@@ -190,19 +169,48 @@ class StateController {
                 this.showPanels,
                 reset);
         } else {
-            this.loadingTask = new GenerateFractalTask(currentFractal, this.views[ViewKeys.FRACTAL], this.cache, this.showPanels, reset);
+            this.loadingTask = new GenerateFractalTask(this.currentFractalKey, currentFractal.nStep, currentFractal.getConfig(), cacheKey, reset);
         }
+    }
+
+    runLoadingTask(onFinished, onError) {
+        this.loadingTask.workerThread = new Worker('./fractalthread.js', { workerData: this.loadingTask.getWorkerData() });
+        this.loadingTask.workerThread.on('message', (data) => {
+            this.loadingTask.data = data;
+        });
+        this.loadingTask.workerThread.on('exit', (code) => {
+            if (code !== 0) {
+                onError();
+            } else {
+                let board = this.loadingTask.data.board;
+                this.cache.put(this.loadingTask.cacheKey, board);
+                let loadedFractal = this.fractals[this.loadingTask.fractalKey];
+                this.views[ViewKeys.FRACTAL].setFractal(
+                    board,
+                    loadedFractal.mode, 
+                    loadedFractal.getDefaultDisplay(),
+                    this.showPanels,
+                    this.loadingTask.reset);
+                onFinished();
+            }
+        });
+        this.loadingTask.workerThread.on('error', (error) => {
+            onError();
+        });
     }
 
     isLoading() {
         return this.loadingTask !== undefined;
     }
 
-    getLoadingTask() {
-        return this.loadingTask;
+    isRunning() {
+        return this.loadingTask !== undefined && this.loadingTask.workerThread !== undefined;
     }
 
     clearLoadingTask() {
+        if (this.loadingTask && this.loadingTask.workerThread) {
+            this.loadingTask.workerThread.terminate();
+        }
         this.loadingTask = undefined;
     }
 

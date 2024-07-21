@@ -1,13 +1,22 @@
 const { Rotations } = require('./constants');
 const { Utils } = require('./utils');
 
+// Fractals
+const { SierpinskiTriangle } = require('./fractals/SierpinskiTriangle');
+const { SierpinskiCarpet } = require('./fractals/SierpinskiCarpet');
+const { SierpinskiHexagon } = require('./fractals/SierpinskiHexagon');
+const { Hexaflake } = require('./fractals/hexaflake');
+const { KochSnowflake } = require('./fractals/kochSnowflake');
+const { KochAntiSnowflake } = require('./fractals/kochAntiSnowflake');
+const { Triflake } = require('./fractals/triflake');
+
 class Fractal {
 
-    constructor(key, impl) {
+    constructor(key) {
         this.key = key;
         this.name = FractalData[key].name;
         this.description = FractalData[key].description;
-        this.impl = impl;
+        this.impl = Fractal.getImpl(key);
 
         this._initConfig();
     }
@@ -27,6 +36,24 @@ class Fractal {
             if (this.supportsRotations(modeKey)) {
                 this.rotation = this.impl.CONFIG.MODE_OPTIONS[modeKey].ROTATIONS[0];
             }
+        }
+    }
+
+    static getImpl(key) {
+        if (key === FractalKeys.SIERPINSKI_TRIANGLE) {
+            return new SierpinskiTriangle();
+        } else if (key === FractalKeys.SIERPINSKI_CARPET) {
+            return new SierpinskiCarpet();
+        } else if (key === FractalKeys.SIERPINSKI_HEXAGON) {
+            return new SierpinskiHexagon();
+        } else if (key === FractalKeys.HEXAFLAKE) {
+            return new Hexaflake();
+        } else if (key === FractalKeys.KOCH_SNOWFLAKE) {
+            return new KochSnowflake();
+        } else if (key === FractalKeys.KOCH_ANTISNOWFLAKE) {
+            return new KochAntiSnowflake();
+        } else if (key === FractalKeys.TRIFLAKE) {
+            return new Triflake();
         }
     }
 
@@ -92,6 +119,15 @@ class Fractal {
             };
         }
         return this.impl.DISPLAY;
+    }
+
+    getConfig() {
+        return {
+            step: this.step,
+            mode: this.mode,
+            inverse: this.inverse,
+            rotation: this.rotation,
+        };
     }
 
 }

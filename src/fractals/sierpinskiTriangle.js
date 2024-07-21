@@ -119,10 +119,10 @@ class SierpinskiTriangle {
         }
 
         let inverse = config !== undefined && config.inverse === true;
-        let rotate = config !== undefined && this.CONFIG.MODE_OPTIONS[Modes.SHAPES].ROTATIONS.includes(config.rotate) ? config.rotate : this.CONFIG.MODE_OPTIONS[Modes.SHAPES].ROTATIONS[0];
+        let rotation = config !== undefined && this.CONFIG.MODE_OPTIONS[Modes.SHAPES].ROTATIONS.includes(config.rotation) ? config.rotation : this.CONFIG.MODE_OPTIONS[Modes.SHAPES].ROTATIONS[0];
 
         let board = Utils.createBoard(this._getWidth(n), this._getHeight(n));
-        this._sierpinski(step, n, board, rotate, inverse);
+        this._sierpinski(step, n, board, rotation, inverse);
       
         return board.reverse();
     }

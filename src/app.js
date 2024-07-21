@@ -55,10 +55,12 @@ class App {
         const renderConfig = this.stateController.getRenderConfig();
         this._clearScreen(full);
         process.stdout.write(this.dashboard.render(renderConfig));
-        if (this.stateController.isLoading()) {
-            this.stateController.getLoadingTask().run().then(() => {
+        if (this.stateController.isLoading() && !this.stateController.isRunning()) {
+            this.stateController.runLoadingTask(() => {
                 this.stateController.clearLoadingTask();
-                this._draw(full);
+                this._draw();
+            }, () => {
+                this.exit('Error generating fractal, exiting.');
             });
         }
     }
@@ -77,7 +79,7 @@ class App {
                 if (key === KeyMap.CTRL_C || key === KeyMap.ESC) {
                     this.exit();
                 } else if (this.stateController.isLoading()) {
-                    return;  // Only allow exit during loading
+                    return;  // During loading, only allow exit
                 } else if (key === KeyMap.UP) {
                     handled = this.stateController.processUp();
                 } else if (key === KeyMap.DOWN) {
@@ -135,6 +137,7 @@ class App {
     }
 
     exit(message) {
+        this.stateController.clearLoadingTask();
         process.stdout.write('\u001b[?1049l');  // Exit altername screen mode
         process.stdout.write('\u001B[?25h');    // Show cursor
         if (message) {

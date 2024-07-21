@@ -159,10 +159,10 @@ class KochAntiSnowflake {
             step = config.step;
         }
 
-        let rotate = config !== undefined && this.CONFIG.MODE_OPTIONS[Modes.SHAPES].ROTATIONS.includes(config.rotate) ? config.rotate : this.CONFIG.MODE_OPTIONS[Modes.SHAPES].ROTATIONS[0];
+        let rotation = config !== undefined && this.CONFIG.MODE_OPTIONS[Modes.SHAPES].ROTATIONS.includes(config.rotation) ? config.rotation : this.CONFIG.MODE_OPTIONS[Modes.SHAPES].ROTATIONS[0];
 
         const triangleBoard = Utils.createBoard(this._getWidth(n), this._getHeight(n));
-        if (rotate === Rotations.FLIP) {
+        if (rotation === Rotations.FLIP) {
             this._drawInverseTriangle(triangleBoard, { x: parseInt(this._getWidth(n) / 2.0), y: 0 }, n);
         } else {
             this._drawTriangle(triangleBoard, { x: parseInt(this._getWidth(n) / 2.0), y: 0 }, n);
@@ -170,7 +170,7 @@ class KochAntiSnowflake {
 
         if (step > 0) {
             const snowflakeBoard = new KochSnowflake().create(n, { step: step });
-            if (rotate === Rotations.FLIP) {
+            if (rotation === Rotations.FLIP) {
                 this._cutSnowflakeBottom(triangleBoard, snowflakeBoard);
                 this._cutSnowflakeTopLeft(triangleBoard, snowflakeBoard);
                 this._cutSnowflakeTopRight(triangleBoard, snowflakeBoard);

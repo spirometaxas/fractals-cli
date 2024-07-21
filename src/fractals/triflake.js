@@ -65,12 +65,12 @@ class Triflake {
             step = config.step;
         }
 
-        let rotate = config !== undefined && this.CONFIG.MODE_OPTIONS[Modes.SHAPES].ROTATIONS.includes(config.rotate) ? config.rotate : this.CONFIG.MODE_OPTIONS[Modes.SHAPES].ROTATIONS[0];
+        let rotation = config !== undefined && this.CONFIG.MODE_OPTIONS[Modes.SHAPES].ROTATIONS.includes(config.rotation) ? config.rotation : this.CONFIG.MODE_OPTIONS[Modes.SHAPES].ROTATIONS[0];
 
         const triflakeBoard = Utils.createBoard(this._getWidth(n), this._getHeight(n));
-        const antiSnowflakeBoard = new KochAntiSnowflake().create(n, { step: step, rotate: rotate });
+        const antiSnowflakeBoard = new KochAntiSnowflake().create(n, { step: step, rotation: rotation });
 
-        if (rotate === Rotations.FLIP) {
+        if (rotation === Rotations.FLIP) {
             this._insertAntiSnowflake({ x: 0, y: parseInt(this._getHeight(n) / 2) }, antiSnowflakeBoard, triflakeBoard);
             this._insertAntiSnowflake({ x: parseInt(this._getWidth(n) / 2) + 1 , y: parseInt(this._getHeight(n) / 2) }, antiSnowflakeBoard, triflakeBoard);
             this._insertAntiSnowflake({ x: parseInt(this._getWidth(n) / 4) + 1 , y: 0 }, antiSnowflakeBoard, triflakeBoard);
