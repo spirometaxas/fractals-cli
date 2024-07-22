@@ -71,7 +71,7 @@ class StateController {
     _initViewController() {
         for (let key of Object.values(FractalKeys)) {
             let fractal = this.fractals[key];
-            while (this.views[ViewKeys.FRACTAL].doesFractalFit({ rows: fractal.impl._getHeight(fractal.nStep + 1), columns: fractal.impl._getWidth(fractal.nStep + 1) }, this.showPanels)) {
+            while (this.views[ViewKeys.FRACTAL].doesFractalFit({ rows: fractal.impl.getHeight(fractal.nStep + 1), columns: fractal.impl.getWidth(fractal.nStep + 1) }, this.showPanels)) {
                 fractal.nStep++;
 
                 if (this.fractals[this.currentFractalKey].supportsStep()) {

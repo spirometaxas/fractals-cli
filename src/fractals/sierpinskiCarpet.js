@@ -5,7 +5,18 @@ class SierpinskiCarpet {
 
     CONFIG = {
         MIN_N: 0,
-        MODE_OPTIONS: {},
+        MODES: [ Modes.BLOCKS, Modes.LINES ],
+        MODE_OPTIONS: {
+            [Modes.BLOCKS]: {
+                SIZE: true,
+                INVERSE: true,
+                CHARACTER: true,
+            },
+            [Modes.LINES]: {
+                SIZE: true,
+                LINE_TYPES: [ LineTypes.STANDARD, LineTypes.BOLD, LineTypes.DOUBLE ],
+            },
+        },
     }
 
     DISPLAY = {
@@ -13,52 +24,38 @@ class SierpinskiCarpet {
         DEFAULT_Y: VerticalAlign.BOTTOM,
     }
 
-
-    constructor() {
-        this.CONFIG.MODES = [ Modes.BLOCKS, Modes.LINES ];
-        this.CONFIG.MODE_OPTIONS[Modes.BLOCKS] = {
-            SIZE: true,
-            INVERSE: true,
-            CHARACTER: true,
-        };
-        this.CONFIG.MODE_OPTIONS[Modes.LINES] = {
-            SIZE: true,
-            LINE_TYPES: [ LineTypes.STANDARD, LineTypes.BOLD, LineTypes.DOUBLE ],
-        };
+    getWidth(n) {
+        return this.getHeight(n) * 2;
     }
 
-    _getWidth(n) {
-        return this._getHeight(n) * 2;
-    }
-
-    _getHeight(n) {
+    getHeight(n) {
         return Math.pow(3, n);
     }
 
     _drawSquare(board, pos, size) {
-        var startX = pos.x - parseInt(this._getWidth(size) / 2.0);
-        var startY = pos.y - parseInt(this._getHeight(size) / 2.0); 
-        for (let i = 0; i < this._getHeight(size); i++) {
-            for (let j = 0; j < this._getWidth(size); j++) {
+        var startX = pos.x - parseInt(this.getWidth(size) / 2.0);
+        var startY = pos.y - parseInt(this.getHeight(size) / 2.0); 
+        for (let i = 0; i < this.getHeight(size); i++) {
+            for (let j = 0; j < this.getWidth(size); j++) {
                 board[startY + i][startX + j] = Shapes.BLOCK;
             }
         }
     }
 
     _drawSquareO(board, pos, size) {
-        var width = this._getWidth(size);
-        var height = this._getHeight(size);
+        var width = this.getWidth(size);
+        var height = this.getHeight(size);
         var startX = pos.x - parseInt(width / 2.0);
         var startY = pos.y - parseInt(height / 2.0); 
         board[startY][startX] = '└';
         board[startY + height][startX] = '┌';
         board[startY][startX + width] = '┘';
         board[startY + height][startX + width] = '┐';
-        for (let i = 1; i < this._getWidth(size); i++) {
+        for (let i = 1; i < this.getWidth(size); i++) {
             board[startY][startX + i] = '─'
             board[startY + height][startX + i] = '─'
         }
-        for (let i = 1; i < this._getHeight(size); i++) {
+        for (let i = 1; i < this.getHeight(size); i++) {
             board[startY + i][startX] = '│';
             board[startY + i][startX + width] = '│';
         }
@@ -78,14 +75,14 @@ class SierpinskiCarpet {
             }
         }
 
-        this._sierpinski(n - 1, size - 1, board, { x: pos.x - this._getWidth(size - 1), y: pos.y - this._getHeight(size - 1) }, inverse, outline);
-        this._sierpinski(n - 1, size - 1, board, { x: pos.x, y: pos.y - this._getHeight(size - 1) }, inverse, outline);
-        this._sierpinski(n - 1, size - 1, board, { x: pos.x + this._getWidth(size - 1), y: pos.y - this._getHeight(size - 1) }, inverse, outline);
-        this._sierpinski(n - 1, size - 1, board, { x: pos.x - this._getWidth(size - 1), y: pos.y }, inverse, outline);
-        this._sierpinski(n - 1, size - 1, board, { x: pos.x + this._getWidth(size - 1), y: pos.y }, inverse, outline);
-        this._sierpinski(n - 1, size - 1, board, { x: pos.x - this._getWidth(size - 1), y: pos.y + this._getHeight(size - 1) }, inverse, outline);
-        this._sierpinski(n - 1, size - 1, board, { x: pos.x, y: pos.y + this._getHeight(size - 1) }, inverse, outline);
-        this._sierpinski(n - 1, size - 1, board, { x: pos.x + this._getWidth(size - 1), y: pos.y + this._getHeight(size - 1) }, inverse, outline);
+        this._sierpinski(n - 1, size - 1, board, { x: pos.x - this.getWidth(size - 1), y: pos.y - this.getHeight(size - 1) }, inverse, outline);
+        this._sierpinski(n - 1, size - 1, board, { x: pos.x, y: pos.y - this.getHeight(size - 1) }, inverse, outline);
+        this._sierpinski(n - 1, size - 1, board, { x: pos.x + this.getWidth(size - 1), y: pos.y - this.getHeight(size - 1) }, inverse, outline);
+        this._sierpinski(n - 1, size - 1, board, { x: pos.x - this.getWidth(size - 1), y: pos.y }, inverse, outline);
+        this._sierpinski(n - 1, size - 1, board, { x: pos.x + this.getWidth(size - 1), y: pos.y }, inverse, outline);
+        this._sierpinski(n - 1, size - 1, board, { x: pos.x - this.getWidth(size - 1), y: pos.y + this.getHeight(size - 1) }, inverse, outline);
+        this._sierpinski(n - 1, size - 1, board, { x: pos.x, y: pos.y + this.getHeight(size - 1) }, inverse, outline);
+        this._sierpinski(n - 1, size - 1, board, { x: pos.x + this.getWidth(size - 1), y: pos.y + this.getHeight(size - 1) }, inverse, outline);
     }
 
     create(n, config) {
@@ -102,10 +99,10 @@ class SierpinskiCarpet {
         let outline = config !== undefined && config.mode === Modes.LINES;
     
 
-        let board = Utils.createBoard(this._getWidth(n) + (outline ? 1 : 0), this._getHeight(n) + (outline ? 1 : 0));
-        this._sierpinski(step, n, board, { x: parseInt(this._getWidth(n) / 2.0), y: parseInt(this._getHeight(n) / 2.0) }, inverse, outline);
+        let board = Utils.createBoard(this.getWidth(n) + (outline ? 1 : 0), this.getHeight(n) + (outline ? 1 : 0));
+        this._sierpinski(step, n, board, { x: parseInt(this.getWidth(n) / 2.0), y: parseInt(this.getHeight(n) / 2.0) }, inverse, outline);
         if (outline) {
-            this._drawSquareO(board, { x: parseInt(this._getWidth(n) / 2.0), y: parseInt(this._getHeight(n) / 2.0) }, n);
+            this._drawSquareO(board, { x: parseInt(this.getWidth(n) / 2.0), y: parseInt(this.getHeight(n) / 2.0) }, n);
         }
         return board.reverse();
     }

@@ -6,7 +6,13 @@ class KochSnowflake {
 
     CONFIG = {
         MIN_N: 0,
-        MODE_OPTIONS: {},
+        MODES: [ Modes.SHAPES ],
+        MODE_OPTIONS: {
+            [Modes.SHAPES]: {
+                SIZE: true,
+                CHARACTER: true,
+            },
+        },
     }
 
     DISPLAY = {
@@ -16,30 +22,22 @@ class KochSnowflake {
 
     MARKER = '*'
 
-    constructor() {
-        this.CONFIG.MODES = [ Modes.SHAPES ];
-        this.CONFIG.MODE_OPTIONS[Modes.SHAPES] = {
-            SIZE: true,
-            CHARACTER: true,
-        };
-    }
-
-    _getWidth(n) {
+    getWidth(n) {
         if (n === 0) {
             return 1;
         } else if (n === 1) {
             return 5;
         }
-        return 3 * this._getWidth(n - 1) + 2;
+        return 3 * this.getWidth(n - 1) + 2;
     }
 
-    _getHeight(n) {
+    getHeight(n) {
         if (n === 0) {
             return 1;
         } else if (n === 1) {
             return 4;
         }
-        return 3 * this._getHeight(n - 1);
+        return 3 * this.getHeight(n - 1);
     }
 
     _createMaskBoard(w, h) {
@@ -67,10 +65,10 @@ class KochSnowflake {
     }
 
     _drawTriangle(board, pos, size) {
-        var curW = this._getWidth(size);
+        var curW = this.getWidth(size);
         var startX = pos.x - parseInt(curW / 2.0);
         var curY = pos.y;
-        for (let i = 0; i < this._getHeight(size); i++) {
+        for (let i = 0; i < this.getHeight(size); i++) {
             for (let j = 0; j < curW; j++) {
                 if (j % 2 === 0) {
                     board[curY][startX + j] = Shapes.TRIANGLE_UP;
@@ -130,10 +128,10 @@ class KochSnowflake {
     }
 
     _trimBoard(board, size) {
-        let targetHeight = this._getHeight(size);
+        let targetHeight = this.getHeight(size);
         let bufferH = board.length - targetHeight;
 
-        let targetWidth = this._getWidth(size);
+        let targetWidth = this.getWidth(size);
         let bufferW = board[0].length - targetWidth;
 
         // Trim Top
@@ -253,8 +251,8 @@ class KochSnowflake {
         }
 
         if (step === 0) {
-            let triangleBoard = Utils.createBoard(this._getWidth(n), this._getHeight(n));
-            this._drawTriangle(triangleBoard, { x: parseInt(this._getWidth(n) / 2.0), y: parseInt(this._getHeight(n) / 4.0) }, n);
+            let triangleBoard = Utils.createBoard(this.getWidth(n), this.getHeight(n));
+            this._drawTriangle(triangleBoard, { x: parseInt(this.getWidth(n) / 2.0), y: parseInt(this.getHeight(n) / 4.0) }, n);
             return triangleBoard.reverse();
         } else {
             let hexagonBoard = new SierpinskiHexagon().create(n, { step: step });

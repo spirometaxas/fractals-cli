@@ -5,7 +5,13 @@ class SierpinskiHexagon {
 
     CONFIG = {
         MIN_N: 0,
-        MODE_OPTIONS: {},
+        MODES: [ Modes.SHAPES ],
+        MODE_OPTIONS: {
+            [Modes.SHAPES]: {
+                SIZE: true,
+                CHARACTER: true,
+            },
+        },
     }
 
     DISPLAY = {
@@ -13,31 +19,23 @@ class SierpinskiHexagon {
         DEFAULT_Y: VerticalAlign.BOTTOM,
     }
 
-    constructor() {
-        this.CONFIG.MODES = [ Modes.SHAPES ];
-        this.CONFIG.MODE_OPTIONS[Modes.SHAPES] = {
-            SIZE: true,
-            CHARACTER: true,
-        };
-    }
-
-    _getWidth(n) {
+    getWidth(n) {
         if (n < 0) {
           return 0;
         }
         if (n === 0) {
           return 3;
         }
-        return (this._getWidth(n - 1) * 3) + 2;
+        return (this.getWidth(n - 1) * 3) + 2;
     }
 
-    _getHeight(n) {
+    getHeight(n) {
         return Math.pow(3, n) * 2;
     }
 
     _drawHexagon(board, pos, size) {
-        let width = this._getWidth(size);
-        for (let i = 0; i < this._getHeight(size) / 2; i++) {
+        let width = this.getWidth(size);
+        for (let i = 0; i < this.getHeight(size) / 2; i++) {
             let startX = pos.x - parseInt(width / 2) + i;
             for (let j = 0; j < width - (2 * i); j++) {
                 if (j % 2 == 0) {
@@ -47,7 +45,7 @@ class SierpinskiHexagon {
                 }
             }
         }
-        for (let i = 0; i < this._getHeight(size) / 2; i++) {
+        for (let i = 0; i < this.getHeight(size) / 2; i++) {
             let startX = pos.x - parseInt(width / 2) + i;
             for (let j = 0; j < width - (2 * i); j++) {
                 if (j % 2 == 0) {
@@ -66,16 +64,16 @@ class SierpinskiHexagon {
         }
 
         // Sides
-        this._sierpinski(n - 1, size - 1, board, { x: pos.x - this._getWidth(size - 1) - 1, y: pos.y });
-        this._sierpinski(n - 1, size - 1, board, { x: pos.x + this._getWidth(size - 1) + 1, y: pos.y });
+        this._sierpinski(n - 1, size - 1, board, { x: pos.x - this.getWidth(size - 1) - 1, y: pos.y });
+        this._sierpinski(n - 1, size - 1, board, { x: pos.x + this.getWidth(size - 1) + 1, y: pos.y });
 
         // Top
-        this._sierpinski(n - 1, size - 1, board, { x: pos.x - parseInt(this._getWidth(size - 1) / 2) - 1, y: pos.y + this._getHeight(size - 1) });
-        this._sierpinski(n - 1, size - 1, board, { x: pos.x + parseInt(this._getWidth(size - 1) / 2) + 1, y: pos.y + this._getHeight(size - 1) });
+        this._sierpinski(n - 1, size - 1, board, { x: pos.x - parseInt(this.getWidth(size - 1) / 2) - 1, y: pos.y + this.getHeight(size - 1) });
+        this._sierpinski(n - 1, size - 1, board, { x: pos.x + parseInt(this.getWidth(size - 1) / 2) + 1, y: pos.y + this.getHeight(size - 1) });
 
         // Bottom
-        this._sierpinski(n - 1, size - 1, board, { x: pos.x - parseInt(this._getWidth(size - 1) / 2) - 1, y: pos.y - this._getHeight(size - 1) });
-        this._sierpinski(n - 1, size - 1, board, { x: pos.x + parseInt(this._getWidth(size - 1) / 2) + 1, y: pos.y - this._getHeight(size - 1) });
+        this._sierpinski(n - 1, size - 1, board, { x: pos.x - parseInt(this.getWidth(size - 1) / 2) - 1, y: pos.y - this.getHeight(size - 1) });
+        this._sierpinski(n - 1, size - 1, board, { x: pos.x + parseInt(this.getWidth(size - 1) / 2) + 1, y: pos.y - this.getHeight(size - 1) });
     }
 
     create(n, config) {
@@ -88,8 +86,8 @@ class SierpinskiHexagon {
             step = config.step;
         }
 
-        let board = Utils.createBoard(this._getWidth(n), this._getHeight(n));
-        this._sierpinski(step, n, board, { x: parseInt(this._getWidth(n) / 2.0), y: parseInt(this._getHeight(n) / 2.0) });
+        let board = Utils.createBoard(this.getWidth(n), this.getHeight(n));
+        this._sierpinski(step, n, board, { x: parseInt(this.getWidth(n) / 2.0), y: parseInt(this.getHeight(n) / 2.0) });
         return board.reverse();
     }
 

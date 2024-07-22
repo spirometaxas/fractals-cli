@@ -8,37 +8,6 @@ FractalKeys = {
     TRIFLAKE:            'triflake',
 }
 
-FractalData = {
-    'sierpinski_triangle': {
-        name: 'Sierpinski Triangle',
-        description: '',
-    },
-    'sierpinski_carpet': {
-        name: 'Sierpinski Carpet',
-        description: '',
-    },
-    'sierpinski_hexagon': {
-        name: 'Sierpinski Hexagon',
-        description: '',
-    },
-    'hexaflake': {
-        name: 'Hexaflake',
-        description: '',
-    },
-    'koch_snowflake': {
-        name: 'Koch Snowflake',
-        description: '',
-    },
-    'koch_antisnowflake': {
-        name: 'Koch Anti-Snowflake',
-        description: '',
-    },
-    'triflake': {
-        name: 'Triflake',
-        description: '',
-    },
-}
-
 PanelKeys = {
     FRACTAL:  'fractal',
     N_STEP:   'n_step',
@@ -182,7 +151,6 @@ Text = {
 
 module.exports = {
     FractalKeys: FractalKeys,
-    FractalData: FractalData,
     PanelKeys: PanelKeys,
     ViewKeys: ViewKeys,
     Rotations: Rotations,

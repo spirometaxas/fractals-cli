@@ -5,7 +5,15 @@ class SierpinskiTriangle {
 
     CONFIG = {
         MIN_N: 0,
-        MODE_OPTIONS: {},
+        MODES: [ Modes.SHAPES ],
+        MODE_OPTIONS: {
+            [Modes.SHAPES]: {
+                SIZE: true,
+                INVERSE: true,
+                ROTATIONS: [ Rotations.STANDARD, Rotations.FLIP ],
+                CHARACTER: true,
+            },
+        },
     }
 
     DISPLAY = {
@@ -13,21 +21,11 @@ class SierpinskiTriangle {
         DEFAULT_Y: VerticalAlign.BOTTOM,
     }
 
-    constructor() {
-        this.CONFIG.MODES = [ Modes.SHAPES ];
-        this.CONFIG.MODE_OPTIONS[Modes.SHAPES] = {
-            SIZE: true,
-            INVERSE: true,
-            ROTATIONS: [ Rotations.STANDARD, Rotations.FLIP ],
-            CHARACTER: true,
-        };
-    }
-
-    _getWidth(n) {
+    getWidth(n) {
         return Math.pow(2, n + 1) - 1;
     }
 
-    _getHeight(n) {
+    getHeight(n) {
         if (n < 0) {
             return 0;
         }
@@ -35,10 +33,10 @@ class SierpinskiTriangle {
     }
 
     _drawTriangle(board, pos, size) {
-        var curW = this._getWidth(size);
-        var startX = pos.x - parseInt(this._getWidth(size) / 2.0);
+        var curW = this.getWidth(size);
+        var startX = pos.x - parseInt(this.getWidth(size) / 2.0);
         var curY = pos.y;
-        for (let i = 0; i < this._getHeight(size); i++) {
+        for (let i = 0; i < this.getHeight(size); i++) {
             for (let j = 0; j < curW; j++) {
                 if (j % 2 === 0) {
                     board[curY][startX + j] = Shapes.TRIANGLE_UP;
@@ -56,7 +54,7 @@ class SierpinskiTriangle {
         var curW = 1;
         var startX = pos.x;
         var curY = pos.y;
-        for (let i = 0; i < this._getHeight(size); i++) {
+        for (let i = 0; i < this.getHeight(size); i++) {
             for (let j = 0; j < curW; j++) {
                 if (j % 2 === 0) {
                     board[curY][startX + j] = Shapes.TRIANGLE_DOWN;
@@ -80,31 +78,31 @@ class SierpinskiTriangle {
             this._drawInverseTriangle(board, pos, size - 1);
         }
 
-        this._sierpinskiS(n - 1, size - 1, board, { x: pos.x - this._getWidth(size - 2) - 1, y: pos.y }, inverse);
-        this._sierpinskiS(n - 1, size - 1, board, { x: pos.x + this._getWidth(size - 2) + 1, y: pos.y }, inverse);
-        this._sierpinskiS(n - 1, size - 1, board, { x: pos.x, y: pos.y + this._getHeight(size - 1) }, inverse);
+        this._sierpinskiS(n - 1, size - 1, board, { x: pos.x - this.getWidth(size - 2) - 1, y: pos.y }, inverse);
+        this._sierpinskiS(n - 1, size - 1, board, { x: pos.x + this.getWidth(size - 2) + 1, y: pos.y }, inverse);
+        this._sierpinskiS(n - 1, size - 1, board, { x: pos.x, y: pos.y + this.getHeight(size - 1) }, inverse);
     }
 
     _sierpinskiF(n, size, board, pos, inverse=false) {
         if (n === 0) {
             if (!inverse) {
-                this._drawInverseTriangle(board, { x: pos.x, y: pos.y - this._getHeight(size) + 1 }, size);
+                this._drawInverseTriangle(board, { x: pos.x, y: pos.y - this.getHeight(size) + 1 }, size);
             }
             return;
         } else if (n > 0 && inverse) {
-            this._drawTriangle(board, { x: pos.x, y: pos.y - this._getHeight(size - 1) + 1 }, size - 1);
+            this._drawTriangle(board, { x: pos.x, y: pos.y - this.getHeight(size - 1) + 1 }, size - 1);
         }
 
-        this._sierpinskiF(n - 1, size - 1, board, { x: pos.x - this._getWidth(size - 2) - 1, y: pos.y }, inverse);
-        this._sierpinskiF(n - 1, size - 1, board, { x: pos.x + this._getWidth(size - 2) + 1, y: pos.y }, inverse);
-        this._sierpinskiF(n - 1, size - 1, board, { x: pos.x, y: pos.y - this._getHeight(size - 1) }, inverse);
+        this._sierpinskiF(n - 1, size - 1, board, { x: pos.x - this.getWidth(size - 2) - 1, y: pos.y }, inverse);
+        this._sierpinskiF(n - 1, size - 1, board, { x: pos.x + this.getWidth(size - 2) + 1, y: pos.y }, inverse);
+        this._sierpinskiF(n - 1, size - 1, board, { x: pos.x, y: pos.y - this.getHeight(size - 1) }, inverse);
     }
 
     _sierpinski(n, size, board, rotate, inverse=false) {
         if (rotate.toLowerCase() === Rotations.FLIP) {
-            this._sierpinskiF(n, size, board, { x: parseInt(this._getWidth(size) / 2.0), y: this._getHeight(size) - 1 }, inverse);
+            this._sierpinskiF(n, size, board, { x: parseInt(this.getWidth(size) / 2.0), y: this.getHeight(size) - 1 }, inverse);
         } else {
-            this._sierpinskiS(n, size, board, { x: parseInt(this._getWidth(size) / 2.0), y: 0 }, inverse);
+            this._sierpinskiS(n, size, board, { x: parseInt(this.getWidth(size) / 2.0), y: 0 }, inverse);
         }
     }
 
@@ -121,7 +119,7 @@ class SierpinskiTriangle {
         let inverse = config !== undefined && config.inverse === true;
         let rotation = config !== undefined && this.CONFIG.MODE_OPTIONS[Modes.SHAPES].ROTATIONS.includes(config.rotation) ? config.rotation : this.CONFIG.MODE_OPTIONS[Modes.SHAPES].ROTATIONS[0];
 
-        let board = Utils.createBoard(this._getWidth(n), this._getHeight(n));
+        let board = Utils.createBoard(this.getWidth(n), this.getHeight(n));
         this._sierpinski(step, n, board, rotation, inverse);
       
         return board.reverse();

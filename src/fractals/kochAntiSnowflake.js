@@ -6,7 +6,14 @@ class KochAntiSnowflake {
 
     CONFIG = {
         MIN_N: 0,
-        MODE_OPTIONS: {},
+        MODES: [ Modes.SHAPES ],
+        MODE_OPTIONS: {
+            [Modes.SHAPES]: {
+                SIZE: true,
+                ROTATIONS: [ Rotations.STANDARD, Rotations.FLIP ],
+                CHARACTER: true,
+            },
+        },
     }
 
     DISPLAY = {
@@ -14,36 +21,27 @@ class KochAntiSnowflake {
         DEFAULT_Y: VerticalAlign.BOTTOM,
     }
 
-    constructor() {
-        this.CONFIG.MODES = [ Modes.SHAPES ];
-        this.CONFIG.MODE_OPTIONS[Modes.SHAPES] = {
-            SIZE: true,
-            ROTATIONS: [ Rotations.STANDARD, Rotations.FLIP ],
-            CHARACTER: true,
-        };
-    }
-
-    _getWidth(n) {
+    getWidth(n) {
         if (n === 0) {
             return 1;
         } else if (n === 1) {
             return 5;
         }
-        return 3 * this._getWidth(n - 1) + 2;
+        return 3 * this.getWidth(n - 1) + 2;
     }
 
-    _getHeight(n) {
+    getHeight(n) {
         if (n === 0) {
             return 1;
         }
-        return parseInt(this._getWidth(n) / 2) + 1;
+        return parseInt(this.getWidth(n) / 2) + 1;
     }
 
     _drawTriangle(board, pos, size) {
-        var curW = this._getWidth(size);
+        var curW = this.getWidth(size);
         var startX = pos.x - parseInt(curW / 2.0);
         var curY = pos.y;
-        for (let i = 0; i < this._getHeight(size); i++) {
+        for (let i = 0; i < this.getHeight(size); i++) {
             for (let j = 0; j < curW; j++) {
                 if (j % 2 === 0) {
                     board[curY][startX + j] = Shapes.TRIANGLE_UP;
@@ -61,7 +59,7 @@ class KochAntiSnowflake {
         var curW = 1;
         var startX = pos.x;
         var curY = pos.y;
-        for (let i = 0; i < this._getHeight(size); i++) {
+        for (let i = 0; i < this.getHeight(size); i++) {
             for (let j = 0; j < curW; j++) {
                 if (j % 2 === 0) {
                     board[curY][startX + j] = Shapes.TRIANGLE_DOWN;
@@ -161,11 +159,11 @@ class KochAntiSnowflake {
 
         let rotation = config !== undefined && this.CONFIG.MODE_OPTIONS[Modes.SHAPES].ROTATIONS.includes(config.rotation) ? config.rotation : this.CONFIG.MODE_OPTIONS[Modes.SHAPES].ROTATIONS[0];
 
-        const triangleBoard = Utils.createBoard(this._getWidth(n), this._getHeight(n));
+        const triangleBoard = Utils.createBoard(this.getWidth(n), this.getHeight(n));
         if (rotation === Rotations.FLIP) {
-            this._drawInverseTriangle(triangleBoard, { x: parseInt(this._getWidth(n) / 2.0), y: 0 }, n);
+            this._drawInverseTriangle(triangleBoard, { x: parseInt(this.getWidth(n) / 2.0), y: 0 }, n);
         } else {
-            this._drawTriangle(triangleBoard, { x: parseInt(this._getWidth(n) / 2.0), y: 0 }, n);
+            this._drawTriangle(triangleBoard, { x: parseInt(this.getWidth(n) / 2.0), y: 0 }, n);
         }
 
         if (step > 0) {

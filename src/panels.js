@@ -1,4 +1,5 @@
-const { Text, FractalKeys, FractalData, PanelKeys, Modes, Rotations } =  require('./constants.js');
+const { Text, FractalKeys, PanelKeys, Modes, Rotations } = require('./constants.js');
+const { FractalData } = require('./fractal.js');
 
 class PanelType {
     static VALUE   = 'VALUE';

@@ -1,4 +1,4 @@
-const { Rotations } = require('./constants');
+const { FractalKeys, Rotations } = require('./constants');
 const { Utils } = require('./utils');
 
 // Fractals
@@ -9,6 +9,44 @@ const { Hexaflake } = require('./fractals/hexaflake');
 const { KochSnowflake } = require('./fractals/kochSnowflake');
 const { KochAntiSnowflake } = require('./fractals/kochAntiSnowflake');
 const { Triflake } = require('./fractals/triflake');
+
+const FractalData = {
+    [FractalKeys.SIERPINSKI_TRIANGLE]: {
+        name: 'Sierpinski Triangle',
+        description: '',
+        impl: SierpinskiTriangle,
+    },
+    [FractalKeys.SIERPINSKI_CARPET]: {
+        name: 'Sierpinski Carpet',
+        description: '',
+        impl: SierpinskiCarpet,
+    },
+    [FractalKeys.SIERPINSKI_HEXAGON]: {
+        name: 'Sierpinski Hexagon',
+        description: '',
+        impl: SierpinskiHexagon,
+    },
+    [FractalKeys.HEXAFLAKE]: {
+        name: 'Hexaflake',
+        description: '',
+        impl: Hexaflake,
+    },
+    [FractalKeys.KOCH_SNOWFLAKE]: {
+        name: 'Koch Snowflake',
+        description: '',
+        impl: KochSnowflake,
+    },
+    [FractalKeys.KOCH_ANTISNOWFLAKE]: {
+        name: 'Koch Anti-Snowflake',
+        description: '',
+        impl: KochAntiSnowflake,
+    },
+    [FractalKeys.TRIFLAKE]: {
+        name: 'Triflake',
+        description: '',
+        impl: Triflake,
+    },
+};
 
 class Fractal {
 
@@ -40,21 +78,7 @@ class Fractal {
     }
 
     static getImpl(key) {
-        if (key === FractalKeys.SIERPINSKI_TRIANGLE) {
-            return new SierpinskiTriangle();
-        } else if (key === FractalKeys.SIERPINSKI_CARPET) {
-            return new SierpinskiCarpet();
-        } else if (key === FractalKeys.SIERPINSKI_HEXAGON) {
-            return new SierpinskiHexagon();
-        } else if (key === FractalKeys.HEXAFLAKE) {
-            return new Hexaflake();
-        } else if (key === FractalKeys.KOCH_SNOWFLAKE) {
-            return new KochSnowflake();
-        } else if (key === FractalKeys.KOCH_ANTISNOWFLAKE) {
-            return new KochAntiSnowflake();
-        } else if (key === FractalKeys.TRIFLAKE) {
-            return new Triflake();
-        }
+        return new FractalData[key].impl();
     }
 
     getMinN() {
@@ -134,4 +158,5 @@ class Fractal {
 
 module.exports = {
     Fractal: Fractal,
+    FractalData: FractalData,
 }
