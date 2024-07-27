@@ -1,5 +1,5 @@
 const { Text, FractalKeys, PanelKeys, Modes, Rotations } = require('./constants.js');
-const { FractalData } = require('./fractal.js');
+const { FractalConfig } = require('./fractal.js');
 
 class PanelType {
     static VALUE   = 'VALUE';
@@ -217,13 +217,13 @@ class PanelManager {
         // Fractal Panel
         let fractalOptions = [
             new ListOption(Text.FRACTAL_SHAPES, undefined, false),
-            new ListOption(FractalData[FractalKeys.SIERPINSKI_TRIANGLE].name, FractalKeys.SIERPINSKI_TRIANGLE),
-            new ListOption(FractalData[FractalKeys.SIERPINSKI_CARPET].name, FractalKeys.SIERPINSKI_CARPET),
-            new ListOption(FractalData[FractalKeys.SIERPINSKI_HEXAGON].name, FractalKeys.SIERPINSKI_HEXAGON),
-            new ListOption(FractalData[FractalKeys.HEXAFLAKE].name, FractalKeys.HEXAFLAKE),
-            new ListOption(FractalData[FractalKeys.KOCH_SNOWFLAKE].name, FractalKeys.KOCH_SNOWFLAKE),
-            new ListOption(FractalData[FractalKeys.KOCH_ANTISNOWFLAKE].name, FractalKeys.KOCH_ANTISNOWFLAKE),
-            new ListOption(FractalData[FractalKeys.TRIFLAKE].name, FractalKeys.TRIFLAKE),
+            new ListOption(FractalConfig[FractalKeys.SIERPINSKI_TRIANGLE].name, FractalKeys.SIERPINSKI_TRIANGLE),
+            new ListOption(FractalConfig[FractalKeys.SIERPINSKI_CARPET].name, FractalKeys.SIERPINSKI_CARPET),
+            new ListOption(FractalConfig[FractalKeys.SIERPINSKI_HEXAGON].name, FractalKeys.SIERPINSKI_HEXAGON),
+            new ListOption(FractalConfig[FractalKeys.HEXAFLAKE].name, FractalKeys.HEXAFLAKE),
+            new ListOption(FractalConfig[FractalKeys.KOCH_SNOWFLAKE].name, FractalKeys.KOCH_SNOWFLAKE),
+            new ListOption(FractalConfig[FractalKeys.KOCH_ANTISNOWFLAKE].name, FractalKeys.KOCH_ANTISNOWFLAKE),
+            new ListOption(FractalConfig[FractalKeys.TRIFLAKE].name, FractalKeys.TRIFLAKE),
             // new ListOption('', undefined, false),
             // new ListOption(Text.FRACTAL_PATTERNS, undefined, false),
         ];

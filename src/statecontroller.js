@@ -56,19 +56,15 @@ class StateController {
         this.showPanels = true;
 
         // Fractal Shapes
-        this.fractals[FractalKeys.SIERPINSKI_TRIANGLE] = new Fractal(FractalKeys.SIERPINSKI_TRIANGLE);
-        this.fractals[FractalKeys.SIERPINSKI_CARPET]   = new Fractal(FractalKeys.SIERPINSKI_CARPET);
-        this.fractals[FractalKeys.SIERPINSKI_HEXAGON]  = new Fractal(FractalKeys.SIERPINSKI_HEXAGON);
-        this.fractals[FractalKeys.HEXAFLAKE]           = new Fractal(FractalKeys.HEXAFLAKE);
-        this.fractals[FractalKeys.KOCH_SNOWFLAKE]      = new Fractal(FractalKeys.KOCH_SNOWFLAKE);
-        this.fractals[FractalKeys.KOCH_ANTISNOWFLAKE]  = new Fractal(FractalKeys.KOCH_ANTISNOWFLAKE);
-        this.fractals[FractalKeys.TRIFLAKE]            = new Fractal(FractalKeys.TRIFLAKE);
+        for (let key of Object.values(FractalKeys)) {
+            this.fractals[key] = new Fractal(key);
+        }
 
-        this._initViewController();
+        this._initViews();
         this._updatePanels(true);
     }
 
-    _initViewController() {
+    _initViews() {
         for (let key of Object.values(FractalKeys)) {
             let fractal = this.fractals[key];
             while (this.views[ViewKeys.FRACTAL].doesFractalFit({ rows: fractal.impl.getHeight(fractal.nStep + 1), columns: fractal.impl.getWidth(fractal.nStep + 1) }, this.showPanels)) {
@@ -162,6 +158,15 @@ class StateController {
         let board = this.cache.get(cacheKey);
 
         if (board) {
+            this.views[ViewKeys.FRACTAL].setFractal(
+                board,
+                currentFractal.mode, 
+                currentFractal.getDefaultDisplay(), 
+                this.showPanels,
+                reset);
+        } else if (currentFractal.nStep <= currentFractal.getMaxPreviewN()) {
+            let board = currentFractal.impl.create(currentFractal.nStep, currentFractal.getConfig());
+            this.cache.put(cacheKey, board);
             this.views[ViewKeys.FRACTAL].setFractal(
                 board,
                 currentFractal.mode, 
@@ -360,13 +365,10 @@ class StateController {
         return false;
     }
 
-    processP() {
-        if (this.currentFocus.type === SelectModes.VIEWER) {
-            this.showPanels = !this.showPanels;
-            this.updateScrollingOnResize();
-            return true;
-        }
-        return false;
+    processV() {
+        this.showPanels = !this.showPanels;
+        this.updateScrollingOnResize();
+        return true;
     }
 
     processBack() {
@@ -399,7 +401,7 @@ class StateController {
         return {
             panels: panels,
             openPanel: openPanel,
-            showPanels: this.showPanels,
+            showPanels: this.currentFocus.type === SelectModes.PANEL || this.showPanels,
             view: this.isLoading() ? ViewKeys.LOADING : ViewKeys.FRACTAL,
         };
     }

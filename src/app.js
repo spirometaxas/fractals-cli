@@ -20,9 +20,9 @@ const KeyMap = {
     LETTER_I: 'I',
     LETTER_M: 'M',
     LETTER_N: 'N',
-    LETTER_P: 'P',
     LETTER_R: 'R',
     LETTER_S: 'S',
+    LETTER_V: 'V',
     // LETTERS: [
     //     'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
     //     'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
@@ -100,8 +100,8 @@ class App {
                     handled = this.stateController.processR();
                 } else if (key === KeyMap.LETTER_M || key === KeyMap.LETTER_M.toLowerCase()) {
                     handled = this.stateController.processM();
-                } else if (key === KeyMap.LETTER_P || key === KeyMap.LETTER_P.toLowerCase()) {
-                    handled = this.stateController.processP();
+                } else if (key === KeyMap.LETTER_V || key === KeyMap.LETTER_V.toLowerCase()) {
+                    handled = this.stateController.processV();
                 } else if (key === KeyMap.BACKSPACE || key === KeyMap.DELETE) {
                     handled = this.stateController.processBack();
                 } else if (key === KeyMap.ENTER_CR || key === KeyMap.ENTER_LF) {

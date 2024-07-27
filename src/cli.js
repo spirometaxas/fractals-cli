@@ -78,6 +78,7 @@ if (process.argv.length > 2) {
         console.log(' TODO: Implement');
         process.exit();
     }
+    // TODO: --cache-mode=<enable|disable>  --thread-mode=<hybrid|always|never>
 }
 
 if (!process.stdout.isTTY) {

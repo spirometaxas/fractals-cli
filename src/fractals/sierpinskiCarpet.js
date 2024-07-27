@@ -5,6 +5,7 @@ class SierpinskiCarpet {
 
     CONFIG = {
         MIN_N: 0,
+        MAX_PREVIEW_N: 4,
         MODES: [ Modes.BLOCKS, Modes.LINES ],
         MODE_OPTIONS: {
             [Modes.BLOCKS]: {

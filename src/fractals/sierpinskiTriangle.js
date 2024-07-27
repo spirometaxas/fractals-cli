@@ -5,6 +5,7 @@ class SierpinskiTriangle {
 
     CONFIG = {
         MIN_N: 0,
+        MAX_PREVIEW_N: 6,
         MODES: [ Modes.SHAPES ],
         MODE_OPTIONS: {
             [Modes.SHAPES]: {

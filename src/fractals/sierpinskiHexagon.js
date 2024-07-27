@@ -5,6 +5,7 @@ class SierpinskiHexagon {
 
     CONFIG = {
         MIN_N: 0,
+        MAX_PREVIEW_N: 3,
         MODES: [ Modes.SHAPES ],
         MODE_OPTIONS: {
             [Modes.SHAPES]: {

@@ -1,9 +1,9 @@
 const { parentPort, workerData } = require('worker_threads');
-const { Fractal } = require('./fractal');
+const { FractalConfig } = require('./fractal');
 
 
-let fractal = Fractal.getImpl(workerData.fractalKey);
+let fractalImpl = new FractalConfig[workerData.fractalKey].impl();
 
-let board = fractal.create(workerData.nStep, workerData.config);
+let board = fractalImpl.create(workerData.nStep, workerData.config);
 
 parentPort.postMessage({ board: board });

@@ -10,7 +10,7 @@ const { KochSnowflake } = require('./fractals/kochSnowflake');
 const { KochAntiSnowflake } = require('./fractals/kochAntiSnowflake');
 const { Triflake } = require('./fractals/triflake');
 
-const FractalData = {
+const FractalConfig = {
     [FractalKeys.SIERPINSKI_TRIANGLE]: {
         name: 'Sierpinski Triangle',
         description: '',
@@ -52,9 +52,9 @@ class Fractal {
 
     constructor(key) {
         this.key = key;
-        this.name = FractalData[key].name;
-        this.description = FractalData[key].description;
-        this.impl = Fractal.getImpl(key);
+        this.name = FractalConfig[key].name;
+        this.description = FractalConfig[key].description;
+        this.impl = new FractalConfig[key].impl();
 
         this._initConfig();
     }
@@ -77,12 +77,12 @@ class Fractal {
         }
     }
 
-    static getImpl(key) {
-        return new FractalData[key].impl();
-    }
-
     getMinN() {
         return this.impl.CONFIG.MIN_N;
+    }
+
+    getMaxPreviewN() {
+        return this.impl.CONFIG.MAX_PREVIEW_N;
     }
 
     getSupportedModes() {
@@ -158,5 +158,5 @@ class Fractal {
 
 module.exports = {
     Fractal: Fractal,
-    FractalData: FractalData,
+    FractalConfig: FractalConfig,
 }
