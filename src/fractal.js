@@ -61,7 +61,7 @@ class Fractal {
 
 
     _initConfig() {
-        this.nStep = this.impl.CONFIG.MIN_N;
+        this.nStep = undefined;  // Will be set dynamically based on screen size
         this.mode = this.impl.CONFIG.MODES[0];
 
         for (let modeKey of this.impl.CONFIG.MODES.slice().reverse()) {
@@ -87,6 +87,10 @@ class Fractal {
 
     getSupportedModes() {
         return this.impl.CONFIG.MODES;
+    }
+
+    getDefaultMode() {
+        return this.getSupportedModes()[0];
     }
 
     supportsStep(modeKey) {
@@ -125,6 +129,12 @@ class Fractal {
         }
     }
 
+    getDefaultRotation() {
+        if (this.supportsRotations(this.getDefaultMode())) {
+            return this.getSupportedRotations(this.getDefaultMode())[0];
+        }
+    }
+
     setMode(modeKey) {
         if (this.getSupportedModes().includes(modeKey)) {
             this.mode = modeKey;
@@ -151,6 +161,15 @@ class Fractal {
             mode: this.mode,
             inverse: this.inverse,
             rotation: this.rotation,
+        };
+    }
+
+    getDefaultConfig(nStep) {
+        return {
+            step: this.supportsStep(this.getDefaultMode()) ? nStep : undefined,
+            mode: this.getDefaultMode(),
+            inverse: this.supportsInverse(this.getDefaultMode()) ? false : undefined,
+            rotation: this.getDefaultRotation(),
         };
     }
 

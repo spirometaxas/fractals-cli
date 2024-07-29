@@ -8,27 +8,43 @@ class SelectModes {
     static PANEL  = 'panel';
 }
 
-class GenerateFractalTask {
-
-    workerThread = undefined;
-    data = undefined;
+class GenerateTask {
 
     constructor(fractalKey, nStep, config, cacheKey, reset) {
         this.fractalKey = fractalKey;
         this.nStep = nStep;
         this.config = config;
         this.cacheKey = cacheKey;
+    }
+
+}
+
+class GenerateFractalsTask {
+
+    workerThread = undefined;
+    data = undefined;
+    tasks = [];
+    reset = false;
+
+    constructor(tasks, reset) {
+        this.tasks = tasks;
         this.reset = reset;
     }
 
     getWorkerData() {
+        let workerData = [];
+        for (let task of this.tasks) {
+            workerData.push({
+                fractalKey: task.fractalKey,
+                nStep: task.nStep,
+                config: task.config,
+                cacheKey: task.cacheKey,
+            });
+        }
         return {
-            fractalKey: this.fractalKey,
-            nStep: this.nStep,
-            config: this.config,
+            tasks: workerData,
         };
     }
-
 }
 
 class StateController {
@@ -60,23 +76,43 @@ class StateController {
             this.fractals[key] = new Fractal(key);
         }
 
-        this._initViews();
+        this._initFractals();
         this._updatePanels(true);
     }
 
-    _initViews() {
-        for (let key of Object.values(FractalKeys)) {
-            let fractal = this.fractals[key];
-            while (this.views[ViewKeys.FRACTAL].doesFractalFit({ rows: fractal.impl.getHeight(fractal.nStep + 1), columns: fractal.impl.getWidth(fractal.nStep + 1) }, this.showPanels)) {
-                fractal.nStep++;
-
-                if (this.fractals[this.currentFractalKey].supportsStep()) {
-                    fractal.step = fractal.nStep;
-                }
+    _initFractals() {
+        let initTasks = [];
+        for (let fractalKey of Object.values(FractalKeys)) {
+            let fractal = this.fractals[fractalKey];
+            for (let nStep = fractal.getMinN(); nStep <= fractal.getMaxPreviewN(); nStep++) {
+                let cacheKey = Cache.createCacheKey(fractalKey, nStep, fractal.getDefaultConfig(nStep));
+                initTasks.push(new GenerateTask(fractalKey, nStep, fractal.getDefaultConfig(nStep), cacheKey));
             }
         }
 
-        this._onFractalConfigChange();
+        this.loadingTask = new GenerateFractalsTask(initTasks, true);
+        this._initCurrentFractal();
+    }
+
+    _initCurrentFractal() {
+        let currentFractal = this.fractals[this.currentFractalKey];
+        currentFractal.nStep = currentFractal.getMinN();
+        if (currentFractal.supportsStep()) {
+            currentFractal.step = currentFractal.getMinN();
+        }
+        for (let nStep = currentFractal.getMinN(); nStep <= currentFractal.getMaxPreviewN(); nStep++) {
+            if (this.views[ViewKeys.FRACTAL].doesFractalFit({
+                rows: currentFractal.impl.getHeight(nStep),
+                columns: currentFractal.impl.getWidth(nStep),
+            }, this._showPanels())) {
+                currentFractal.nStep = nStep;
+                if (currentFractal.supportsStep()) {
+                    currentFractal.step = nStep;
+                }
+            } else {
+                break;
+            }
+        }
     }
 
     _updatePanels(init=false) {
@@ -136,23 +172,27 @@ class StateController {
 
     _onFractalChange(newFractalKey) {
         this.currentFractalKey = newFractalKey;
-        this._updatePanels();
         this._onFractalConfigChange();
+        this._updatePanels();
     }
 
     _onRotationChange(newRotationKey) {
         this.fractals[this.currentFractalKey].setRotation(newRotationKey);
         this._onFractalConfigChange();
+        this._updatePanels();
     }
 
     _onModeChange(newModeKey) {
         this.fractals[this.currentFractalKey].setMode(newModeKey);
-        this._updatePanels();
         this._onFractalConfigChange();
+        this._updatePanels();
     }
 
     _onFractalConfigChange(reset=true) {
         let currentFractal = this.fractals[this.currentFractalKey];
+        if (currentFractal.nStep === undefined) {
+            this._initCurrentFractal();
+        }
 
         let cacheKey = Cache.createCacheKey(currentFractal.key, currentFractal.nStep, currentFractal.getConfig());
         let board = this.cache.get(cacheKey);
@@ -162,19 +202,21 @@ class StateController {
                 board,
                 currentFractal.mode, 
                 currentFractal.getDefaultDisplay(), 
-                this.showPanels,
+                this._showPanels(),
                 reset);
         } else if (currentFractal.nStep <= currentFractal.getMaxPreviewN()) {
-            let board = currentFractal.impl.create(currentFractal.nStep, currentFractal.getConfig());
+            board = currentFractal.impl.create(currentFractal.nStep, currentFractal.getConfig());
             this.cache.put(cacheKey, board);
             this.views[ViewKeys.FRACTAL].setFractal(
                 board,
                 currentFractal.mode, 
                 currentFractal.getDefaultDisplay(), 
-                this.showPanels,
+                this._showPanels(),
                 reset);
         } else {
-            this.loadingTask = new GenerateFractalTask(this.currentFractalKey, currentFractal.nStep, currentFractal.getConfig(), cacheKey, reset);
+            this.loadingTask = new GenerateFractalsTask([
+                new GenerateTask(this.currentFractalKey, currentFractal.nStep, currentFractal.getConfig(), cacheKey),
+            ], reset);
         }
     }
 
@@ -187,14 +229,19 @@ class StateController {
             if (code !== 0) {
                 onError();
             } else {
-                let board = this.loadingTask.data.board;
-                this.cache.put(this.loadingTask.cacheKey, board);
-                let loadedFractal = this.fractals[this.loadingTask.fractalKey];
+                for (let cacheKey in this.loadingTask.data.response) {
+                    let board = this.loadingTask.data.response[cacheKey];
+                    this.cache.put(cacheKey, board);
+                }
+
+                let currentFractal = this.fractals[this.currentFractalKey];
+                let cacheKey = Cache.createCacheKey(currentFractal.key, currentFractal.nStep, currentFractal.getConfig());
+                let board = this.cache.get(cacheKey);
                 this.views[ViewKeys.FRACTAL].setFractal(
                     board,
-                    loadedFractal.mode, 
-                    loadedFractal.getDefaultDisplay(),
-                    this.showPanels,
+                    currentFractal.mode, 
+                    currentFractal.getDefaultDisplay(),
+                    this._showPanels(),
                     this.loadingTask.reset);
                 onFinished();
             }
@@ -224,7 +271,7 @@ class StateController {
             this.panels[this.currentFocus.id].processUp();
             return true;
         } else if (this.currentFocus.type === SelectModes.VIEWER) {
-            return this.views[ViewKeys.FRACTAL].scrollUp(this.showPanels);
+            return this.views[ViewKeys.FRACTAL].scrollUp(this._showPanels());
         }
         return false;
     }
@@ -234,20 +281,20 @@ class StateController {
             this.panels[this.currentFocus.id].processDown();
             return true;
         } else if (this.currentFocus.type === SelectModes.VIEWER) {
-            return this.views[ViewKeys.FRACTAL].scrollDown(this.showPanels);
+            return this.views[ViewKeys.FRACTAL].scrollDown(this._showPanels());
         }
         return false;
     }
 
     processLeft() {
         if (this.currentFocus.type === SelectModes.VIEWER) {
-            return this.views[ViewKeys.FRACTAL].scrollLeft(this.showPanels);
+            return this.views[ViewKeys.FRACTAL].scrollLeft(this._showPanels());
         }
     }
 
     processRight() {
         if (this.currentFocus.type === SelectModes.VIEWER) {
-            return this.views[ViewKeys.FRACTAL].scrollRight(this.showPanels);
+            return this.views[ViewKeys.FRACTAL].scrollRight(this._showPanels());
         }
     }
 
@@ -381,7 +428,11 @@ class StateController {
     }
 
     updateScrollingOnResize() {
-        this.views[ViewKeys.FRACTAL].updateScrollingOnResize(this.showPanels);
+        this.views[ViewKeys.FRACTAL].updateScrollingOnResize(this._showPanels());
+    }
+
+    _showPanels() {
+        return this.currentFocus.type === SelectModes.PANEL || this.showPanels;
     }
 
     getRenderConfig() {
@@ -401,7 +452,7 @@ class StateController {
         return {
             panels: panels,
             openPanel: openPanel,
-            showPanels: this.currentFocus.type === SelectModes.PANEL || this.showPanels,
+            showPanels: this._showPanels(),
             view: this.isLoading() ? ViewKeys.LOADING : ViewKeys.FRACTAL,
         };
     }

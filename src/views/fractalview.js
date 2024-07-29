@@ -4,15 +4,19 @@ const { BaseView } = require('./baseview.js');
 
 class FractalView extends BaseView {
 
-    constructor() {
+    constructor(scrollable=true) {
         super();
         this.scrolling = { x: 0, y: 0 };
+        this.scrollable = scrollable;
         this.fractal = undefined;
         this.fractalMode = undefined;
         this.displayConfig = undefined;
     }
 
     scrollUp(showPanels) {
+        if (!this.scrollable) {
+            return false;
+        }
         let rows = this._getDimensions(showPanels).rows;
         if (rows < this.fractal.length) {
             if (this.scrolling.y > 0) {
@@ -24,6 +28,9 @@ class FractalView extends BaseView {
     }
 
     scrollDown(showPanels) {
+        if (!this.scrollable) {
+            return false;
+        }
         let rows = this._getDimensions(showPanels).rows;
         if (rows < this.fractal.length) {
             if (this.scrolling.y + rows + 1 <= this.fractal.length) {
@@ -35,6 +42,9 @@ class FractalView extends BaseView {
     }
 
     scrollLeft(showPanels) {
+        if (!this.scrollable) {
+            return false;
+        }
         let columns = this._getDimensions(showPanels).columns;
         if (columns < this.fractal[0].length) {
             if (this.scrolling.x > 0) {
@@ -46,6 +56,9 @@ class FractalView extends BaseView {
     }
 
     scrollRight(showPanels) {
+        if (!this.scrollable) {
+            return false;
+        }
         let columns = this._getDimensions(showPanels).columns;
         if (columns < this.fractal[0].length) {
             if (this.scrolling.x + columns + 1 <= this.fractal[0].length) {
