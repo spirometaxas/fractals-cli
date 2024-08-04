@@ -20,6 +20,7 @@ PanelKeys = {
 
 ViewKeys = {
     FRACTAL: 'fractal',
+    SPLASH:  'splash',
     LOADING: 'loading',
 }
 

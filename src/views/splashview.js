@@ -14,7 +14,7 @@ class SplashView extends FractalView {
     }
 
     draw(board, styleConfig, showPanels) {
-        for (let fractal in fractalSet) {
+        for (let fractal of this.fractalSet) {
             if (this.doesFractalFit({ rows: fractal.length, columns: fractal[0].length }, showPanels)) {
                 this.fractal = fractal;
             } else {

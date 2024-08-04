@@ -145,8 +145,8 @@ class Fractal {
         return this.getSupportedModes().length > 1;
     }
 
-    getDefaultDisplay() {
-        if (this.supportsRotations()) {
+    getDefaultDisplay(defaultMode=false) {
+        if (!defaultMode && this.supportsRotations()) {
             return {
                 DEFAULT_X: Utils.rotateDefaultX(this.impl.DISPLAY.DEFAULT_X, this.impl.DISPLAY.DEFAULT_Y, this.rotation),
                 DEFAULT_Y: Utils.rotateDefaultY(this.impl.DISPLAY.DEFAULT_X, this.impl.DISPLAY.DEFAULT_Y, this.rotation),

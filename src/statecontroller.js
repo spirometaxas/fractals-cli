@@ -71,16 +71,15 @@ class StateController {
         this.currentFocus = { type: SelectModes.VIEWER };
         this.showPanels = true;
 
-        // Fractal Shapes
-        for (let key of Object.values(FractalKeys)) {
-            this.fractals[key] = new Fractal(key);
-        }
-
         this._initFractals();
         this._updatePanels(true);
     }
 
     _initFractals() {
+        for (let key of Object.values(FractalKeys)) {
+            this.fractals[key] = new Fractal(key);
+        }
+
         let initTasks = [];
         for (let fractalKey of Object.values(FractalKeys)) {
             let fractal = this.fractals[fractalKey];
@@ -123,6 +122,9 @@ class StateController {
         if (init) {
             this.panels[PanelKeys.FRACTAL].setOnEnterCallback((selectedKey) => {
                 this._onFractalChange(selectedKey);
+            });
+            this.panels[PanelKeys.FRACTAL].setOnFocusCallback((selectedKey) => {
+                this._onFractalFocusChange(selectedKey);
             });
         }
         
@@ -174,6 +176,16 @@ class StateController {
         this.currentFractalKey = newFractalKey;
         this._onFractalConfigChange();
         this._updatePanels();
+    }
+
+    _onFractalFocusChange(fractalKey) {
+        let focusFractal = this.fractals[fractalKey];
+        let boards = [];
+        for (let nStep = focusFractal.getMinN(); nStep <= focusFractal.getMaxPreviewN(); nStep++) {
+            let cacheKey = Cache.createCacheKey(fractalKey, nStep, focusFractal.getDefaultConfig(nStep));
+            boards.push(this.cache.get(cacheKey));
+        }
+        this.views[ViewKeys.SPLASH].setFractalSet(boards, focusFractal.getDefaultMode(), focusFractal.getDefaultDisplay(true));
     }
 
     _onRotationChange(newRotationKey) {
@@ -237,12 +249,14 @@ class StateController {
                 let currentFractal = this.fractals[this.currentFractalKey];
                 let cacheKey = Cache.createCacheKey(currentFractal.key, currentFractal.nStep, currentFractal.getConfig());
                 let board = this.cache.get(cacheKey);
-                this.views[ViewKeys.FRACTAL].setFractal(
-                    board,
-                    currentFractal.mode, 
-                    currentFractal.getDefaultDisplay(),
-                    this._showPanels(),
-                    this.loadingTask.reset);
+                if (board) {
+                    this.views[ViewKeys.FRACTAL].setFractal(
+                        board,
+                        currentFractal.mode, 
+                        currentFractal.getDefaultDisplay(),
+                        this._showPanels(),
+                        this.loadingTask.reset);
+                }
                 onFinished();
             }
         });
@@ -264,6 +278,10 @@ class StateController {
             this.loadingTask.workerThread.terminate();
         }
         this.loadingTask = undefined;
+    }
+
+    _showPanels() {
+        return this.currentFocus.type === SelectModes.PANEL || this.showPanels;
     }
 
     processUp() {
@@ -310,6 +328,7 @@ class StateController {
     processF() {
         if (this.currentFocus.type === SelectModes.VIEWER) {
             this.currentFocus = { type: SelectModes.PANEL, id: PanelKeys.FRACTAL };
+            this.panels[PanelKeys.FRACTAL].processOpen();
             return true;
         }
         return false;
@@ -431,10 +450,6 @@ class StateController {
         this.views[ViewKeys.FRACTAL].updateScrollingOnResize(this._showPanels());
     }
 
-    _showPanels() {
-        return this.currentFocus.type === SelectModes.PANEL || this.showPanels;
-    }
-
     getRenderConfig() {
         let panels;
         let openPanel;
@@ -449,11 +464,18 @@ class StateController {
             openPanel = this.currentFocus.id;
         }
 
+        let viewKey = ViewKeys.FRACTAL;
+        if (this.isLoading()) {
+            viewKey = ViewKeys.LOADING;
+        } else if (this.currentFocus.type === SelectModes.PANEL && this.currentFocus.id === PanelKeys.FRACTAL) {
+            viewKey = ViewKeys.SPLASH;
+        }
+
         return {
             panels: panels,
             openPanel: openPanel,
             showPanels: this._showPanels(),
-            view: this.isLoading() ? ViewKeys.LOADING : ViewKeys.FRACTAL,
+            view: viewKey,
         };
     }
 

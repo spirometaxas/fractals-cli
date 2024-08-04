@@ -124,6 +124,9 @@ class ListPanel extends Panel {
                 this.currentFocusIndex = this.options.length - 1;
             }
         }
+        if (this.onFocusCallback) {
+            this.onFocusCallback(this.getFocusedKey());
+        }
     }
 
     processDown() {
@@ -141,10 +144,17 @@ class ListPanel extends Panel {
                 this.currentFocusIndex = 0;
             }
         }
+        if (this.onFocusCallback) {
+            this.onFocusCallback(this.getFocusedKey());
+        }
     }
 
     setOnEnterCallback(callback) {
         this.onEnterCallback = callback;
+    }
+
+    setOnFocusCallback(callback) {
+        this.onFocusCallback = callback;
     }
 
     processEnter() {
@@ -156,6 +166,12 @@ class ListPanel extends Panel {
         this.currentOptionIndex = this.currentFocusIndex;
         if (previous !== this.currentOptionIndex && this.onEnterCallback) {
             this.onEnterCallback(this.getCurrentKey());
+        }
+    }
+
+    processOpen() {
+        if (this.onFocusCallback) {
+            this.onFocusCallback(this.getFocusedKey());
         }
     }
 
