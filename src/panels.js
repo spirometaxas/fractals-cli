@@ -240,8 +240,11 @@ class PanelManager {
             new ListOption(FractalConfig[FractalKeys.KOCH_SNOWFLAKE].name, FractalKeys.KOCH_SNOWFLAKE),
             new ListOption(FractalConfig[FractalKeys.KOCH_ANTISNOWFLAKE].name, FractalKeys.KOCH_ANTISNOWFLAKE),
             new ListOption(FractalConfig[FractalKeys.TRIFLAKE].name, FractalKeys.TRIFLAKE),
-            // new ListOption('', undefined, false),
-            // new ListOption(Text.FRACTAL_PATTERNS, undefined, false),
+
+            new ListOption('', undefined, false),
+            new ListOption(Text.FRACTAL_PATTERNS, undefined, false),
+            new ListOption(FractalConfig[FractalKeys.CANTOR_SET].name, FractalKeys.CANTOR_SET),
+            new ListOption(FractalConfig[FractalKeys.CANTOR_DUST].name, FractalKeys.CANTOR_DUST),
         ];
         let fractalPanel = new ListPanel(Text.FRACTAL.toUpperCase(), 'f', fractalOptions);
         panelMap[PanelKeys.FRACTAL] = fractalPanel;

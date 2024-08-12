@@ -9,6 +9,8 @@ const { Hexaflake } = require('./fractals/hexaflake');
 const { KochSnowflake } = require('./fractals/kochSnowflake');
 const { KochAntiSnowflake } = require('./fractals/kochAntiSnowflake');
 const { Triflake } = require('./fractals/triflake');
+const { CantorSet } = require('./fractals/cantorSet');
+const { CantorDust } = require('./fractals/cantorDust');
 
 const FractalConfig = {
     [FractalKeys.SIERPINSKI_TRIANGLE]: {
@@ -45,6 +47,16 @@ const FractalConfig = {
         name: 'Triflake',
         description: '',
         impl: Triflake,
+    },
+    [FractalKeys.CANTOR_SET]: {
+        name: 'Cantor Set',
+        description: '',
+        impl: CantorSet,
+    },
+    [FractalKeys.CANTOR_DUST]: {
+        name: 'Cantor Dust',
+        description: '',
+        impl: CantorDust,
     },
 };
 

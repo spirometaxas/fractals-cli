@@ -6,6 +6,8 @@ FractalKeys = {
     KOCH_SNOWFLAKE:      'koch_snowflake',
     KOCH_ANTISNOWFLAKE:  'koch_antisnowflake',
     TRIFLAKE:            'triflake',
+    CANTOR_SET:          'cantor_set',
+    CANTOR_DUST:         'cantor_dust',
 }
 
 PanelKeys = {

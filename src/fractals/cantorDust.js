@@ -1,7 +1,7 @@
-const { Modes, LineTypes, Shapes, VerticalAlign, HorizontalAlign } = require('../constants');
+const { Modes, Shapes, VerticalAlign, HorizontalAlign } = require('../constants');
 const { Utils } = require('../utils');
 
-class SierpinskiCarpet {
+class CantorDust {
 
     CONFIG = {
         MIN_N: 0,
@@ -10,7 +10,6 @@ class SierpinskiCarpet {
         MODE_OPTIONS: {
             [Modes.BLOCKS]: {
                 SIZE: true,
-                INVERSE: true,
                 CHARACTER: true,
             },
             [Modes.LINES]: {
@@ -62,52 +61,42 @@ class SierpinskiCarpet {
         }
     }
 
-    _sierpinski(n, size, board, pos, inverse, mode) {
+    _cantor(n, size, board, pos, mode) {
         if (n === 0) {
-            if (!(inverse || mode === Modes.LINES)) {
+            if (mode === Modes.LINES) {
+                this._drawSquareLines(board, pos, size);
+            } else {
                 this._drawSquareBlocks(board, pos, size);
             }
             return;
-        } else if (n > 0 && (inverse || mode === Modes.LINES)) {
-            if (mode === Modes.LINES) {
-                this._drawSquareLines(board, pos, size - 1);
-            } else {
-                this._drawSquareBlocks(board, pos, size - 1);
-            }
         }
 
-        this._sierpinski(n - 1, size - 1, board, { x: pos.x - this.getWidth(size - 1), y: pos.y - this.getHeight(size - 1) }, inverse, mode);
-        this._sierpinski(n - 1, size - 1, board, { x: pos.x, y: pos.y - this.getHeight(size - 1) }, inverse, mode);
-        this._sierpinski(n - 1, size - 1, board, { x: pos.x + this.getWidth(size - 1), y: pos.y - this.getHeight(size - 1) }, inverse, mode);
-        this._sierpinski(n - 1, size - 1, board, { x: pos.x - this.getWidth(size - 1), y: pos.y }, inverse, mode);
-        this._sierpinski(n - 1, size - 1, board, { x: pos.x + this.getWidth(size - 1), y: pos.y }, inverse, mode);
-        this._sierpinski(n - 1, size - 1, board, { x: pos.x - this.getWidth(size - 1), y: pos.y + this.getHeight(size - 1) }, inverse, mode);
-        this._sierpinski(n - 1, size - 1, board, { x: pos.x, y: pos.y + this.getHeight(size - 1) }, inverse, mode);
-        this._sierpinski(n - 1, size - 1, board, { x: pos.x + this.getWidth(size - 1), y: pos.y + this.getHeight(size - 1) }, inverse, mode);
+        this._cantor(n - 1, size - 1, board, { x: pos.x + this.getWidth(size - 1), y: pos.y + this.getHeight(size - 1) }, mode);
+        this._cantor(n - 1, size - 1, board, { x: pos.x - this.getWidth(size - 1), y: pos.y - this.getHeight(size - 1) }, mode);
+        this._cantor(n - 1, size - 1, board, { x: pos.x + this.getWidth(size - 1), y: pos.y - this.getHeight(size - 1) }, mode);
+        this._cantor(n - 1, size - 1, board, { x: pos.x - this.getWidth(size - 1), y: pos.y + this.getHeight(size - 1) }, mode);
     }
 
     create(n, config) {
         if (n === undefined || n < this.CONFIG.MIN_N) {
             return [];
         }
-    
+  
         let step = n;
         if (config && config.step !== undefined && config.step >= this.CONFIG.MIN_N && config.step <= n) {
             step = config.step;
         }
 
-        let mode = config && config.mode !== undefined && this.CONFIG.MODES.includes(config.mode) ? config.mode : this.CONFIG.MODES[0];
-        let inverse = config !== undefined && config.inverse === true;
-    
-        let board = Utils.createBoard(this.getWidth(n, mode), this.getHeight(n, mode));
-        this._sierpinski(step, n, board, { x: parseInt(this.getWidth(n) / 2.0), y: parseInt(this.getHeight(n) / 2.0) }, inverse, mode);
-        if (mode === Modes.LINES) {
-            this._drawSquareLines(board, { x: parseInt(this.getWidth(n) / 2.0), y: parseInt(this.getHeight(n) / 2.0) }, n);
-        }
+        const mode = config && config.mode !== undefined && this.CONFIG.MODES.includes(config.mode) ? config.mode : this.CONFIG.MODES[0];
+
+        const board = Utils.createBoard(this.getWidth(n, mode), this.getHeight(n, mode));
+        this._cantor(step, n, board, { x: parseInt(this.getWidth(n) / 2.0), y: parseInt(this.getHeight(n) / 2.0) }, mode);
         return board.reverse();
     }
+
 }
 
+
 module.exports = {
-    SierpinskiCarpet: SierpinskiCarpet,
-};
+    CantorDust: CantorDust,
+}
