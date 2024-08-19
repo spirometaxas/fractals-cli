@@ -11,6 +11,8 @@ const { KochAntiSnowflake } = require('./fractals/kochAntiSnowflake');
 const { Triflake } = require('./fractals/triflake');
 const { CantorSet } = require('./fractals/cantorSet');
 const { CantorDust } = require('./fractals/cantorDust');
+const { HTree } = require('./fractals/hTree');
+const { MinkowskiSausage } = require('./fractals/minkowskiSausage');
 
 const FractalConfig = {
     [FractalKeys.SIERPINSKI_TRIANGLE]: {
@@ -57,6 +59,16 @@ const FractalConfig = {
         name: 'Cantor Dust',
         description: '',
         impl: CantorDust,
+    },
+    [FractalKeys.H_TREE]: {
+        name: 'H-Tree',
+        description: '',
+        impl: HTree,
+    },
+    [FractalKeys.MINKOWSKI_SAUSAGE]: {
+        name: 'Minkowski Sausage',
+        description: '',
+        impl: MinkowskiSausage,
     },
 };
 

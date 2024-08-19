@@ -8,6 +8,8 @@ FractalKeys = {
     TRIFLAKE:            'triflake',
     CANTOR_SET:          'cantor_set',
     CANTOR_DUST:         'cantor_dust',
+    H_TREE:              'h_tree',
+    MINKOWSKI_SAUSAGE:   'minkowski_sausage',
 }
 
 PanelKeys = {

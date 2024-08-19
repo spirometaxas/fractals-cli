@@ -158,7 +158,8 @@ class KochAntiSnowflake {
             step = config.step;
         }
 
-        let rotation = config !== undefined && this.CONFIG.MODE_OPTIONS[Modes.SHAPES].ROTATIONS.includes(config.rotation) ? config.rotation : this.CONFIG.MODE_OPTIONS[Modes.SHAPES].ROTATIONS[0];
+        let mode = this.CONFIG.MODES[0];
+        let rotation = config !== undefined && this.CONFIG.MODE_OPTIONS[mode].ROTATIONS.includes(config.rotation) ? config.rotation : this.CONFIG.MODE_OPTIONS[mode].ROTATIONS[0];
 
         const triangleBoard = Utils.createBoard(this.getWidth(n), this.getHeight(n));
         if (rotation === Rotations.FLIP) {
