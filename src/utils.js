@@ -63,6 +63,18 @@ class Utils {
         }
         return defaultY;
     }
+
+    static drawForTest(board) {
+        var result = [];
+        for (let i = 0; i < board.length; i++) {
+            let line = '';
+            for (let j = 0; j < board[i].length; j++) {
+                line += board[i][j];
+            }
+            result.push(line);
+        }
+        return result;
+    }
 }
 
 module.exports = {

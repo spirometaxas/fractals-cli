@@ -14,7 +14,8 @@
   },
   "homepage": "https://spirometaxas.com/projects/fractals-cli",
   "scripts": {
-    "cli": "node ./src/cli.js"
+    "cli": "node ./src/cli.js",
+    "test": "jest"
   },
   "author": {
     "name": "Spiro Metaxas",
@@ -30,5 +31,8 @@
     "terminal",
     "shell",
     "unicode"
-  ]
+  ],
+  "devDependencies": {
+    "jest": "^29.7.0"
+  }
 }
