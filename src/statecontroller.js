@@ -2,6 +2,7 @@ const { Fractal } = require('./Fractal');
 const { FractalKeys, FractalData, PanelKeys, ViewKeys, Modes } = require('./constants');
 const { Cache } = require('./cache');
 const { Worker } = require('worker_threads');
+const path = require('path');
 
 class SelectModes {
     static VIEWER = 'viewer';
@@ -233,7 +234,7 @@ class StateController {
     }
 
     runLoadingTask(onFinished, onError) {
-        this.loadingTask.workerThread = new Worker('./fractalthread.js', { workerData: this.loadingTask.getWorkerData() });
+        this.loadingTask.workerThread = new Worker(path.join(__dirname, './fractalthread.js'), { workerData: this.loadingTask.getWorkerData() });
         this.loadingTask.workerThread.on('message', (data) => {
             this.loadingTask.data = data;
         });
