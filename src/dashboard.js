@@ -181,11 +181,11 @@ class Dashboard {
         this._setTextColor(pos.x + 2, pos.y + height - 3, Layout.PANEL_WIDTH - 4, Colors.MEDIUM_GRAY, false);
         this._setTextColor(pos.x + 18, pos.y + height - 3, Text.UP.length + Text.DOWN.length + 3, Colors.SKY_BLUE, false);
 
-        let secondLineText = Text.SELECT + ':<' + Text.ENTER.toUpperCase() + '>  ' + Text.EXIT + ':<' + Text.BACKSPACE.toUpperCase() +  '>';
+        let secondLineText = Text.SELECT + ':<' + Text.ENTER.toUpperCase() + '>  ' + Text.EXIT + ':<Q>';
         this._setText(pos.x + 2, pos.y + height - 2, secondLineText, Layout.PANEL_WIDTH - 4, 'center');
         this._setTextColor(pos.x + 2, pos.y + height - 2, Layout.PANEL_WIDTH - 4, Colors.MEDIUM_GRAY, false);
-        this._setTextColor(pos.x + 9, pos.y + height - 2, Text.ENTER.length + 2, Colors.SKY_BLUE, false);
-        this._setTextColor(pos.x + 23, pos.y + height - 2, Text.BACKSPACE.length + 2, Colors.SKY_BLUE, false);
+        this._setTextColor(pos.x + 13, pos.y + height - 2, Text.ENTER.length + 2, Colors.SKY_BLUE, false);
+        this._setTextColor(pos.x + 27, pos.y + height - 2, 1 + 2, Colors.SKY_BLUE, false);
 
         // Draw items
         let currentYPos = 3;
