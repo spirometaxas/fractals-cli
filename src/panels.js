@@ -247,6 +247,9 @@ class PanelManager {
             new ListOption(FractalConfig[FractalKeys.CANTOR_DUST].name, FractalKeys.CANTOR_DUST),
             new ListOption(FractalConfig[FractalKeys.H_TREE].name, FractalKeys.H_TREE),
             new ListOption(FractalConfig[FractalKeys.MINKOWSKI_SAUSAGE].name, FractalKeys.MINKOWSKI_SAUSAGE),
+            new ListOption(FractalConfig[FractalKeys.T_SQUARE].name, FractalKeys.T_SQUARE),
+            new ListOption(FractalConfig[FractalKeys.VICSEK_FRACTAL].name, FractalKeys.VICSEK_FRACTAL),
+            new ListOption(FractalConfig[FractalKeys.V_TREE].name, FractalKeys.V_TREE),
         ];
         let fractalPanel = new ListPanel(Text.FRACTAL.toUpperCase(), 'f', fractalOptions);
         panelMap[PanelKeys.FRACTAL] = fractalPanel;
@@ -278,6 +281,7 @@ class PanelManager {
             new ListOption(Text.LEFT, Rotations.LEFT),
             new ListOption(Text.RIGHT, Rotations.RIGHT),
             new ListOption(Text.FLIP, Rotations.FLIP),
+            new ListOption(Text.DIAGONAL, Rotations.DIAGONAL),
         ];
         let rotationPanel = new ListPanel(Text.ROTATION.toUpperCase(), 'r', rotationOptions);
         panelMap[PanelKeys.ROTATION] = rotationPanel;

@@ -31,6 +31,14 @@ class Utils {
             } else if (defaultY === VerticalAlign.TOP) {
                 return HorizontalAlign.RIGHT;
             }
+        } else if (rotation === Rotations.DIAGONAL) {
+            if (defaultX === HorizontalAlign.LEFT) {
+                return HorizontalAlign.CENTER;
+            } else if (defaultX === HorizontalAlign.CENTER) {
+                return HorizontalAlign.LEFT;
+            } else if (defaultX === HorizontalAlign.RIGHT) {
+                return HorizontalAlign.CENTER;
+            }
         }
         return defaultX;
     }

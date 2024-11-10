@@ -10,6 +10,9 @@ FractalKeys = {
     CANTOR_DUST:         'cantor_dust',
     H_TREE:              'h_tree',
     MINKOWSKI_SAUSAGE:   'minkowski_sausage',
+    T_SQUARE:            't_square',
+    VICSEK_FRACTAL:      'vicsek_fractal',
+    V_TREE:              'v_tree',
 }
 
 PanelKeys = {
@@ -33,6 +36,7 @@ Rotations = {
     FLIP:     'flip',
     LEFT:     'left',
     RIGHT:    'right',
+    DIAGONAL: 'diagonal',
 }
 
 Modes = {
@@ -140,6 +144,7 @@ Text = {
     LEFT: 'Left',
     RIGHT: 'Right',
     FLIP: 'Flip',
+    DIAGONAL: 'Diagonal',
     ON: 'On',
     OFF: 'Off',
     CONTROLS: 'Controls',
