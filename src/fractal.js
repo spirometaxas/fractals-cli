@@ -139,7 +139,7 @@ class Fractal {
         if (!modeKey) {
             modeKey = this.mode;
         }
-        return this.impl.CONFIG.MODE_OPTIONS[modeKey] && this.impl.CONFIG.MODE_OPTIONS[modeKey].SIZE;
+        return this.impl.CONFIG.MODE_OPTIONS[modeKey] && this.impl.CONFIG.MODE_OPTIONS[modeKey].STEP;
     }
 
     supportsInverse(modeKey) {

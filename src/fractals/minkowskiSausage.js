@@ -10,7 +10,7 @@ class MinkowskiSausage {
         MODES: [ Modes.LINES ],
         MODE_OPTIONS: {
             [Modes.LINES]: {
-                SIZE: true,
+                STEP: true,
                 INVERSE: true,
                 ROTATIONS: [ Rotations.STANDARD, Rotations.LEFT, Rotations.RIGHT, Rotations.FLIP ],
                 LINE_TYPES: [ LineTypes.STANDARD, LineTypes.BOLD, LineTypes.DOUBLE ],

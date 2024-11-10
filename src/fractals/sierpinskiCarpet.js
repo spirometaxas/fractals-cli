@@ -9,12 +9,12 @@ class SierpinskiCarpet {
         MODES: [ Modes.BLOCKS, Modes.LINES ],
         MODE_OPTIONS: {
             [Modes.BLOCKS]: {
-                SIZE: true,
+                STEP: true,
                 INVERSE: true,
                 CHARACTER: true,
             },
             [Modes.LINES]: {
-                SIZE: true,
+                STEP: true,
                 LINE_TYPES: [ LineTypes.STANDARD, LineTypes.BOLD, LineTypes.DOUBLE ],
             },
         },

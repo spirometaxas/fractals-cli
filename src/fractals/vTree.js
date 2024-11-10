@@ -9,12 +9,12 @@ class VTree {
         MODES: [ Modes.LINES, Modes.BLOCKS ],
         MODE_OPTIONS: {
             [Modes.LINES]: {
-                SIZE: true,
+                STEP: true,
                 ROTATIONS: [ Rotations.STANDARD, Rotations.LEFT, Rotations.RIGHT, Rotations.FLIP ],
                 LINE_TYPES: [ LineTypes.STANDARD, LineTypes.BOLD, LineTypes.DOUBLE ],
             },
             [Modes.BLOCKS]: {
-                SIZE: true,
+                STEP: true,
                 ROTATIONS: [ Rotations.STANDARD, Rotations.LEFT, Rotations.RIGHT, Rotations.FLIP ],
                 CHARACTER: true,
             }

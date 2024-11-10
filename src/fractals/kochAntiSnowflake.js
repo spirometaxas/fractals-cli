@@ -10,7 +10,7 @@ class KochAntiSnowflake {
         MODES: [ Modes.SHAPES ],
         MODE_OPTIONS: {
             [Modes.SHAPES]: {
-                SIZE: true,
+                STEP: true,
                 ROTATIONS: [ Rotations.STANDARD, Rotations.FLIP ],
                 CHARACTER: true,
             },

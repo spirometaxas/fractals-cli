@@ -9,7 +9,7 @@ class HTree {
         MODES: [ Modes.LINES ],
         MODE_OPTIONS: {
             [Modes.LINES]: {
-                SIZE: true,
+                STEP: true,
                 LINE_TYPES: [ LineTypes.STANDARD, LineTypes.BOLD, LineTypes.DOUBLE ],
             },
         },

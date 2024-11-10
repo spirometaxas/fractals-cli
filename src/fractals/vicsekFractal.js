@@ -9,12 +9,12 @@ class VicsekFractal {
         MODES: [ Modes.BLOCKS, Modes.LINES ],
         MODE_OPTIONS: {
             [Modes.BLOCKS]: {
-                SIZE: true,
+                STEP: true,
                 ROTATIONS: [ Rotations.STANDARD, Rotations.DIAGONAL ],
                 CHARACTER: true,
             },
             [Modes.LINES]: {
-                SIZE: true,
+                STEP: true,
                 ROTATIONS: [ Rotations.STANDARD, Rotations.DIAGONAL ],
                 LINE_TYPES: [ LineTypes.STANDARD, LineTypes.BOLD, LineTypes.DOUBLE ],
             },

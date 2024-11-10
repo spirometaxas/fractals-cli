@@ -10,7 +10,7 @@ class KochSnowflake {
         MODES: [ Modes.SHAPES ],
         MODE_OPTIONS: {
             [Modes.SHAPES]: {
-                SIZE: true,
+                STEP: true,
                 CHARACTER: true,
             },
         },

@@ -9,11 +9,11 @@ class CantorDust {
         MODES: [ Modes.BLOCKS, Modes.LINES ],
         MODE_OPTIONS: {
             [Modes.BLOCKS]: {
-                SIZE: true,
+                STEP: true,
                 CHARACTER: true,
             },
             [Modes.LINES]: {
-                SIZE: true,
+                STEP: true,
                 LINE_TYPES: [ LineTypes.STANDARD, LineTypes.BOLD, LineTypes.DOUBLE ],
             },
         },
