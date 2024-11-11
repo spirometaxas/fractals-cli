@@ -27,6 +27,10 @@ class BaseView {
         };
     }
 
+    getScrollingState(showPanels) {
+        return {};
+    }
+
     draw(board, styleConfig, showPanels) {
         // Override
     }

@@ -57,6 +57,7 @@ class StateController {
         PanelKeys.MODE,
         PanelKeys.INVERSE,
         PanelKeys.ROTATION,
+        PanelKeys.SCROLL,
         PanelKeys.CONTROLS,
     ];
 

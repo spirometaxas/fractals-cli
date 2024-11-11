@@ -5,6 +5,7 @@ class PanelType {
     static VALUE   = 'VALUE';
     static LIST    = 'LIST';
     static DISPLAY = 'DISPLAY';
+    static SCROLL  = 'SCROLL';
 }
 
 class Panel {
@@ -217,6 +218,43 @@ class StepValuePanel extends ValuePanel {
 
 }
 
+class ScrollPanel extends ValuePanel {
+
+    constructor(title, keycode) {
+        super(title, keycode);
+        this.value = undefined;
+        this.type = PanelType.SCROLL;
+    }
+
+    setValue(scrollState) {
+        this.value = '';
+        if (scrollState.x !== undefined) {
+            this.value += 'X: ' + parseInt(scrollState.x * 100) + '%';
+            if (scrollState.x >= 0.1 && scrollState.x < 1.0) {
+                this.value += ' ';
+            } else if (scrollState.x < 0.1) {
+                this.value += '  ';
+            }
+        }
+        if (scrollState.y !== undefined) {
+            if (scrollState.x !== undefined) {
+                this.value += '  ';
+            }
+            this.value += 'Y: ' + parseInt(scrollState.y * 100) + '%';
+            if (scrollState.y >= 0.1 && scrollState.y < 1.0) {
+                this.value += ' ';
+            } else if (scrollState.y < 0.1) {
+                this.value += '  ';
+            }
+        }
+    }
+
+    getValue() {
+        return this.value;
+    }
+
+}
+
 class DisplayPanel extends Panel {
 
     constructor(title) {
@@ -285,6 +323,10 @@ class PanelManager {
         ];
         let rotationPanel = new ListPanel(Text.ROTATION.toUpperCase(), 'r', rotationOptions);
         panelMap[PanelKeys.ROTATION] = rotationPanel;
+
+        // Scroll Panel
+        let scrollPanel = new ScrollPanel(Text.SCROLL.toUpperCase(), 'arrows');
+        panelMap[PanelKeys.SCROLL] = scrollPanel;
 
         // Controls Panel
         let controlsPanel = new DisplayPanel(Text.CONTROLS.toUpperCase());

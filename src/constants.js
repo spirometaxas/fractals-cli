@@ -22,6 +22,7 @@ PanelKeys = {
     MODE:     'mode',
     INVERSE:  'inverse',
     ROTATION: 'rotation',
+    SCROLL:   'scroll',
     CONTROLS: 'controls',
 }
 
@@ -157,6 +158,7 @@ Text = {
     BACKSPACE: 'Backspace',
     NOT_SUPPORTED: 'Not Supported',
     MORE: 'More',
+    SCROLL: 'Scroll',
 }
 
 module.exports = {

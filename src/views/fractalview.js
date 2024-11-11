@@ -119,6 +119,20 @@ class FractalView extends BaseView {
         }
     }
 
+    getScrollingState(showPanels) {
+        if (this.fractal) {
+            let dimensions = this._getDimensions(showPanels);
+            let scrollX = this.scrollable && this.fractal[0].length > dimensions.columns ? this.scrolling.x / (this.fractal[0].length - dimensions.columns) : undefined;
+            let scrollY = this.scrollable && this.fractal.length > dimensions.rows ? this.scrolling.y / (this.fractal.length - dimensions.rows) : undefined;
+            return {
+                x: scrollX,
+                y: scrollY,
+            };
+        } else {
+            return {};
+        }
+    }
+
     draw(board, styleConfig, showPanels) {
         let startX = showPanels ? Layout.FULL_PANEL_WIDTH : Layout.PANEL_LEFT_BUFFER;
         let startY = 0;
