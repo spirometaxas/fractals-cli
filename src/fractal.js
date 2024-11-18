@@ -16,6 +16,9 @@ const { MinkowskiSausage } = require('./fractals/minkowskiSausage');
 const { TSquare } = require('./fractals/tSquare');
 const { VicsekFractal } = require('./fractals/vicsekFractal');
 const { VTree } = require('./fractals/vTree');
+const { HilbertCurve } = require('./fractals/hilbertCurve');
+const { MooreCurve } = require('./fractals/mooreCurve');
+const { PeanoCurve } = require('./fractals/peanoCurve');
 
 const FractalConfig = {
     [FractalKeys.SIERPINSKI_TRIANGLE]: {
@@ -87,6 +90,21 @@ const FractalConfig = {
         name: 'V-Tree',
         description: '',
         impl: VTree,
+    },
+    [FractalKeys.HILBERT_CURVE]: {
+        name: 'Hilbert Curve',
+        description: '',
+        impl: HilbertCurve,
+    },
+    [FractalKeys.MOORE_CURVE]: {
+        name: 'Moore Curve',
+        description: '',
+        impl: MooreCurve,
+    },
+    [FractalKeys.PEANO_CURVE]: {
+        name: 'Peano Curve',
+        description: '',
+        impl: PeanoCurve,
     },
 };
 

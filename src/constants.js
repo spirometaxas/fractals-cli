@@ -13,6 +13,9 @@ FractalKeys = {
     T_SQUARE:            't_square',
     VICSEK_FRACTAL:      'vicsek_fractal',
     V_TREE:              'v_tree',
+    HILBERT_CURVE:       'hilbert_curve',
+    MOORE_CURVE:         'moore_curve',
+    PEANO_CURVE:         'peano_curve',
 }
 
 PanelKeys = {
@@ -133,6 +136,7 @@ Text = {
     FRACTAL: 'Fractal',
     FRACTAL_SHAPES: 'Fractal Shapes',
     FRACTAL_PATTERNS: 'Fractal Patterns',
+    SPACE_FILLING_CURVES: 'Space-Filling Curves',
     N_STEP: 'N-Step',
     STEP: 'Step',
     MODE: 'Mode',
