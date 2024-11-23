@@ -19,6 +19,8 @@ const { VTree } = require('./fractals/vTree');
 const { HilbertCurve } = require('./fractals/hilbertCurve');
 const { MooreCurve } = require('./fractals/mooreCurve');
 const { PeanoCurve } = require('./fractals/peanoCurve');
+const { GreekCross } = require('./fractals/greekCross');
+const { SierpinskiArrowhead } = require('./fractals/sierpinskiArrowhead');
 
 const FractalConfig = {
     [FractalKeys.SIERPINSKI_TRIANGLE]: {
@@ -105,6 +107,16 @@ const FractalConfig = {
         name: 'Peano Curve',
         description: '',
         impl: PeanoCurve,
+    },
+    [FractalKeys.GREEK_CROSS]: {
+        name: 'Greek Cross',
+        description: '',
+        impl: GreekCross,
+    },
+    [FractalKeys.SIERPINSKI_ARROWHEAD]: {
+        name: 'Sierpinski Arrowhead',
+        description: '',
+        impl: SierpinskiArrowhead,
     },
 };
 
