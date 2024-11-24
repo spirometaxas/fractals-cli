@@ -86,7 +86,7 @@ const FractalConfig = {
         impl: SierpinskiMaze,
     },
     [FractalKeys.T_SQUARE]: {
-        name: 'T-Square Fractal',
+        name: 'T-Square',
         description: '',
         impl: TSquare,
     },
