@@ -13,6 +13,7 @@ FractalKeys = {
     T_SQUARE:             't_square',
     VICSEK_FRACTAL:       'vicsek_fractal',
     V_TREE:               'v_tree',
+    DRAGON_CURVE:         'dragon_curve',
     HILBERT_CURVE:        'hilbert_curve',
     MOORE_CURVE:          'moore_curve',
     PEANO_CURVE:          'peano_curve',

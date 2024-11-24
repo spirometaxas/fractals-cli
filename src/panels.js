@@ -291,6 +291,7 @@ class PanelManager {
 
             new ListOption('', undefined, false),
             new ListOption(Text.SPACE_FILLING_CURVES, undefined, false),
+            new ListOption(FractalConfig[FractalKeys.DRAGON_CURVE].name, FractalKeys.DRAGON_CURVE),
             new ListOption(FractalConfig[FractalKeys.HILBERT_CURVE].name, FractalKeys.HILBERT_CURVE),
             new ListOption(FractalConfig[FractalKeys.MOORE_CURVE].name, FractalKeys.MOORE_CURVE),
             new ListOption(FractalConfig[FractalKeys.PEANO_CURVE].name, FractalKeys.PEANO_CURVE),
