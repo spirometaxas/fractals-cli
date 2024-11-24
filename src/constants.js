@@ -10,6 +10,7 @@ FractalKeys = {
     CANTOR_DUST:          'cantor_dust',
     H_TREE:               'h_tree',
     MINKOWSKI_SAUSAGE:    'minkowski_sausage',
+    SIERPINSKI_MAZE:      'sierpinski_maze',
     T_SQUARE:             't_square',
     VICSEK_FRACTAL:       'vicsek_fractal',
     V_TREE:               'v_tree',

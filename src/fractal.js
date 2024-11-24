@@ -13,6 +13,7 @@ const { CantorSet } = require('./fractals/cantorSet');
 const { CantorDust } = require('./fractals/cantorDust');
 const { HTree } = require('./fractals/hTree');
 const { MinkowskiSausage } = require('./fractals/minkowskiSausage');
+const { SierpinskiMaze } = require('./fractals/sierpinskiMaze');
 const { TSquare } = require('./fractals/tSquare');
 const { VicsekFractal } = require('./fractals/vicsekFractal');
 const { VTree } = require('./fractals/vTree');
@@ -78,6 +79,11 @@ const FractalConfig = {
         name: 'Minkowski Sausage',
         description: '',
         impl: MinkowskiSausage,
+    },
+    [FractalKeys.SIERPINSKI_MAZE]: {
+        name: 'Sierpinski Maze',
+        description: '',
+        impl: SierpinskiMaze,
     },
     [FractalKeys.T_SQUARE]: {
         name: 'T-Square Fractal',

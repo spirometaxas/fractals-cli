@@ -285,6 +285,7 @@ class PanelManager {
             new ListOption(FractalConfig[FractalKeys.CANTOR_DUST].name, FractalKeys.CANTOR_DUST),
             new ListOption(FractalConfig[FractalKeys.H_TREE].name, FractalKeys.H_TREE),
             new ListOption(FractalConfig[FractalKeys.MINKOWSKI_SAUSAGE].name, FractalKeys.MINKOWSKI_SAUSAGE),
+            new ListOption(FractalConfig[FractalKeys.SIERPINSKI_MAZE].name, FractalKeys.SIERPINSKI_MAZE),
             new ListOption(FractalConfig[FractalKeys.T_SQUARE].name, FractalKeys.T_SQUARE),
             new ListOption(FractalConfig[FractalKeys.VICSEK_FRACTAL].name, FractalKeys.VICSEK_FRACTAL),
             new ListOption(FractalConfig[FractalKeys.V_TREE].name, FractalKeys.V_TREE),
