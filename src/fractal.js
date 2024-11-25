@@ -22,7 +22,9 @@ const { HilbertCurve } = require('./fractals/hilbertCurve');
 const { MooreCurve } = require('./fractals/mooreCurve');
 const { PeanoCurve } = require('./fractals/peanoCurve');
 const { GreekCross } = require('./fractals/greekCross');
+const { GosperCurve } = require('./fractals/gosperCurve');
 const { SierpinskiArrowhead } = require('./fractals/sierpinskiArrowhead');
+const { SierpinskiCurve } = require('./fractals/sierpinskiCurve');
 
 const FractalConfig = {
     [FractalKeys.SIERPINSKI_TRIANGLE]: {
@@ -125,10 +127,20 @@ const FractalConfig = {
         description: '',
         impl: GreekCross,
     },
+    [FractalKeys.GOSPER_CURVE]: {
+        name: 'Gosper Curve',
+        description: '',
+        impl: GosperCurve,
+    },
     [FractalKeys.SIERPINSKI_ARROWHEAD]: {
         name: 'Sierpinski Arrowhead',
         description: '',
         impl: SierpinskiArrowhead,
+    },
+    [FractalKeys.SIERPINSKI_CURVE]: {
+        name: 'Sierpinski Curve',
+        description: '',
+        impl: SierpinskiCurve,
     },
 };
 

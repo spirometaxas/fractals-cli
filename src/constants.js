@@ -19,7 +19,9 @@ FractalKeys = {
     MOORE_CURVE:          'moore_curve',
     PEANO_CURVE:          'peano_curve',
     GREEK_CROSS:          'greek_cross',
+    GOSPER_CURVE:         'gosper_curve',
     SIERPINSKI_ARROWHEAD: 'sierpinski_arrowhead',
+    SIERPINSKI_CURVE:     'sierpinski_curve',
 }
 
 PanelKeys = {

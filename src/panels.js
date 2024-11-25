@@ -297,7 +297,9 @@ class PanelManager {
             new ListOption(FractalConfig[FractalKeys.MOORE_CURVE].name, FractalKeys.MOORE_CURVE),
             new ListOption(FractalConfig[FractalKeys.PEANO_CURVE].name, FractalKeys.PEANO_CURVE),
             new ListOption(FractalConfig[FractalKeys.GREEK_CROSS].name, FractalKeys.GREEK_CROSS),
+            new ListOption(FractalConfig[FractalKeys.GOSPER_CURVE].name, FractalKeys.GOSPER_CURVE),
             new ListOption(FractalConfig[FractalKeys.SIERPINSKI_ARROWHEAD].name, FractalKeys.SIERPINSKI_ARROWHEAD),
+            new ListOption(FractalConfig[FractalKeys.SIERPINSKI_CURVE].name, FractalKeys.SIERPINSKI_CURVE),
         ];
         let fractalPanel = new ListPanel(Text.FRACTAL.toUpperCase(), 'f', fractalOptions);
         panelMap[PanelKeys.FRACTAL] = fractalPanel;
