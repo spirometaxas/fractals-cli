@@ -11,6 +11,7 @@ const { KochAntiSnowflake } = require('./fractals/kochAntiSnowflake');
 const { Triflake } = require('./fractals/triflake');
 const { CantorSet } = require('./fractals/cantorSet');
 const { CantorDust } = require('./fractals/cantorDust');
+const { FibonacciWordFractal } = require('./fractals/fibonacciWordFractal');
 const { HTree } = require('./fractals/hTree');
 const { MinkowskiSausage } = require('./fractals/minkowskiSausage');
 const { SierpinskiMaze } = require('./fractals/sierpinskiMaze');
@@ -71,6 +72,11 @@ const FractalConfig = {
         name: 'Cantor Dust',
         description: '',
         impl: CantorDust,
+    },
+    [FractalKeys.FIBONACCI_WORD_FRACTAL]: {
+        name: 'Fibonacci Word Fractal',
+        description: '',
+        impl: FibonacciWordFractal,
     },
     [FractalKeys.H_TREE]: {
         name: 'H-Tree',

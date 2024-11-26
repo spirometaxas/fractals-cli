@@ -283,6 +283,7 @@ class PanelManager {
             new ListOption(Text.FRACTAL_PATTERNS, undefined, false),
             new ListOption(FractalConfig[FractalKeys.CANTOR_SET].name, FractalKeys.CANTOR_SET),
             new ListOption(FractalConfig[FractalKeys.CANTOR_DUST].name, FractalKeys.CANTOR_DUST),
+            new ListOption(FractalConfig[FractalKeys.FIBONACCI_WORD_FRACTAL].name, FractalKeys.FIBONACCI_WORD_FRACTAL),
             new ListOption(FractalConfig[FractalKeys.H_TREE].name, FractalKeys.H_TREE),
             new ListOption(FractalConfig[FractalKeys.MINKOWSKI_SAUSAGE].name, FractalKeys.MINKOWSKI_SAUSAGE),
             new ListOption(FractalConfig[FractalKeys.SIERPINSKI_MAZE].name, FractalKeys.SIERPINSKI_MAZE),
