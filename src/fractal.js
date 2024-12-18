@@ -257,6 +257,22 @@ class Fractal {
         return this.impl.DISPLAY;
     }
 
+    supportsLineTypes(modeKey) {
+        if (!modeKey) {
+            modeKey = this.mode;
+        }
+        return this.impl.CONFIG.MODE_OPTIONS[modeKey] && this.impl.CONFIG.MODE_OPTIONS[modeKey].LINE_TYPES;
+    }
+
+    getSupportedLineTypes(modeKey) {
+        if (!modeKey) {
+            modeKey = this.mode;
+        }
+        if (this.impl.CONFIG.MODE_OPTIONS[modeKey]) {
+            return this.impl.CONFIG.MODE_OPTIONS[modeKey].LINE_TYPES;
+        }
+    }
+
     getConfig() {
         return {
             step: this.step,

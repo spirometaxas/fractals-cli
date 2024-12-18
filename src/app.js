@@ -16,8 +16,11 @@ const KeyMap = {
     DELETE: '\u007F',
     ENTER_LF: '\u000A',
     ENTER_CR: '\u000D',
+    LETTER_D: 'D',
     LETTER_F: 'F',
+    LETTER_G: 'G',
     LETTER_I: 'I',
+    LETTER_L: 'L',
     LETTER_M: 'M',
     LETTER_N: 'N',
     LETTER_Q: 'Q',
@@ -89,6 +92,10 @@ class App {
                     handled = this.stateController.processLeft();
                 } else if (key === KeyMap.RIGHT) {
                     handled = this.stateController.processRight();
+                } else if (key === KeyMap.LETTER_D || key === KeyMap.LETTER_D.toLowerCase()) {
+                    handled = this.stateController.processD();
+                } else if (key === KeyMap.LETTER_G || key === KeyMap.LETTER_G.toLowerCase()) {
+                    handled = this.stateController.processG();
                 } else if (key === KeyMap.LETTER_F || key === KeyMap.LETTER_F.toLowerCase()) {
                     handled = this.stateController.processF();
                 } else if (key === KeyMap.LETTER_N || key === KeyMap.LETTER_N.toLowerCase()) {
@@ -101,6 +108,8 @@ class App {
                     handled = this.stateController.processR();
                 } else if (key === KeyMap.LETTER_M || key === KeyMap.LETTER_M.toLowerCase()) {
                     handled = this.stateController.processM();
+                } else if (key === KeyMap.LETTER_L || key === KeyMap.LETTER_L.toLowerCase()) {
+                    handled = this.stateController.processL();
                 } else if (key === KeyMap.LETTER_V || key === KeyMap.LETTER_V.toLowerCase()) {
                     handled = this.stateController.processV();
                 } else if (key === KeyMap.LETTER_Q || key === KeyMap.LETTER_Q.toLowerCase() 

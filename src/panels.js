@@ -345,6 +345,15 @@ class PanelManager {
         let controlsPanel = new DisplayPanel(Text.CONTROLS.toUpperCase());
         panelMap[PanelKeys.CONTROLS] = controlsPanel;
 
+        // Line Type Panel
+        let lineTypeOptions = [
+            new ListOption(Text.STANDARD, LineTypes.STANDARD),
+            new ListOption(Text.BOLD, LineTypes.BOLD),
+            new ListOption(Text.DOUBLE, LineTypes.DOUBLE),
+        ];
+        let lineTypePanel = new ListPanel(Text.LINE_TYPE.toUpperCase(), 'l', lineTypeOptions);
+        panelMap[PanelKeys.LINE_TYPE] = lineTypePanel;
+
         return panelMap;
     }
 

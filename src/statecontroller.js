@@ -1,5 +1,5 @@
 const { Fractal } = require('./Fractal');
-const { FractalKeys, FractalData, PanelKeys, ViewKeys, Modes } = require('./constants');
+const { FractalKeys, FractalData, PanelKeys, ViewKeys, Modes, Menus } = require('./constants');
 const { Cache } = require('./cache');
 const { Worker } = require('worker_threads');
 const path = require('path');
@@ -50,7 +50,7 @@ class GenerateFractalsTask {
 
 class StateController {
 
-    PANEL_ORDER = [
+    GENERAL_MENU_PANEL_ORDER = [
         PanelKeys.FRACTAL,
         PanelKeys.N_STEP,
         PanelKeys.STEP,
@@ -61,8 +61,17 @@ class StateController {
         PanelKeys.CONTROLS,
     ];
 
+    DISPLAY_MENU_PANEL_ORDER = [
+        PanelKeys.LINE_TYPE,
+        PanelKeys.SCROLL,
+        PanelKeys.CONTROLS,
+    ];
+
     fractals = {};
     currentFractalKey = FractalKeys.SIERPINSKI_TRIANGLE;  // Default to Sierpinski Triangle
+    designConfig = {
+        lineType: LineTypes.STANDARD,
+    };
 
     constructor(config, views, panels) {
         this.views = views;
@@ -72,6 +81,7 @@ class StateController {
 
         this.currentFocus = { type: SelectModes.VIEWER };
         this.showPanels = true;
+        this.menuType = Menus.GENERAL;
 
         this._initFractals();
         this._updatePanels(true);
@@ -172,6 +182,23 @@ class StateController {
                 this._onRotationChange(selectedKey);
             });
         }
+
+        // Line Type Panel
+        if (fractalConfig.supportsLineTypes(currentFractalModeKey)) {
+            let supportedLineTypes = fractalConfig.getSupportedLineTypes(currentFractalModeKey);
+            if (!supportedLineTypes.includes(this.designConfig.lineType)) {
+                this.designConfig.lineType = supportedLineTypes[0];
+            }
+            this.panels[PanelKeys.LINE_TYPE].updateOptionsByKey(supportedLineTypes, this.designConfig.lineType);
+            this.panels[PanelKeys.LINE_TYPE].visible = true;
+        } else {
+            this.panels[PanelKeys.LINE_TYPE].visible = false;
+        }
+        if (init) {
+            this.panels[PanelKeys.LINE_TYPE].setOnEnterCallback((selectedKey) => {
+                this._onLineTypeChange(selectedKey);
+            });
+        }
     }
 
     _onFractalChange(newFractalKey) {
@@ -232,6 +259,11 @@ class StateController {
                 new GenerateTask(this.currentFractalKey, currentFractal.nStep, currentFractal.getConfig(), cacheKey),
             ], reset);
         }
+    }
+
+    _onLineTypeChange(newLineType) {
+        this.designConfig.lineType = newLineType;
+        this._updatePanels();
     }
 
     runLoadingTask(onFinished, onError) {
@@ -362,11 +394,11 @@ class StateController {
     }
 
     processS(isUpperCase) {
-        if (!this.fractals[this.currentFractalKey].supportsStep()) {
-            return false;
-        }
-
         if (this.currentFocus.type === SelectModes.VIEWER) {
+            if (!this.fractals[this.currentFractalKey].supportsStep()) {
+                return false;
+            }
+
             let currentFractal = this.fractals[this.currentFractalKey];
             if (currentFractal.supportsStep()) {
                 if (isUpperCase) {
@@ -392,11 +424,11 @@ class StateController {
     }
 
     processI() {
-        if (!this.fractals[this.currentFractalKey].supportsInverse()) {
-            return false;
-        }
-
         if (this.currentFocus.type === SelectModes.VIEWER) {
+            if (!this.fractals[this.currentFractalKey].supportsInverse()) {
+                return false;
+            }
+
             let currentFractal = this.fractals[this.currentFractalKey];
             if (currentFractal.supportsInverse()) {
                 currentFractal.inverse = !currentFractal.inverse;
@@ -410,26 +442,67 @@ class StateController {
     }
 
     processR() {
-        if (!this.fractals[this.currentFractalKey].supportsRotations()) {
+        if (this.currentFocus.type === SelectModes.VIEWER) {
+            if (!this.fractals[this.currentFractalKey].supportsRotations()) {
+                return false;
+            }
+
+            this.currentFocus = { type: SelectModes.PANEL, id: PanelKeys.ROTATION };
+            return true;
+        }
+
+        return false;
+    }
+
+    processD() {
+        if (this.currentFocus.type !== SelectModes.VIEWER) {
             return false;
         }
 
-        if (this.currentFocus.type === SelectModes.VIEWER) {
-            this.currentFocus = { type: SelectModes.PANEL, id: PanelKeys.ROTATION };
+        if (this.menuType !== Menus.DESING) {
+            this.menuType = Menus.DESIGN;
+            return true;
+        }
+        return false;
+    }
+
+    processG() {
+        if (this.currentFocus.type !== SelectModes.VIEWER) {
+            return false;
+        }
+
+        if (this.menuType !== Menus.GENERAL) {
+            this.menuType = Menus.GENERAL;
             return true;
         }
         return false;
     }
 
     processM() {
-        if (!this.fractals[this.currentFractalKey].supportsMultipleModes()) {
+        if (this.currentFocus.type === SelectModes.VIEWER) {
+            if (!this.fractals[this.currentFractalKey].supportsMultipleModes()) {
+                return false;
+            }
+            
+            if (this.currentFocus.type === SelectModes.VIEWER) {
+                this.currentFocus = { type: SelectModes.PANEL, id: PanelKeys.MODE };
+                return true;
+            }
             return false;
         }
-        
+        return false;
+    }
+
+    processL() {
         if (this.currentFocus.type === SelectModes.VIEWER) {
-            this.currentFocus = { type: SelectModes.PANEL, id: PanelKeys.MODE };
+            if (!this.fractals[this.currentFractalKey].supportsLineTypes()) {
+                return false;
+            }
+
+            this.currentFocus = { type: SelectModes.PANEL, id: PanelKeys.LINE_TYPE };
             return true;
         }
+
         return false;
     }
 
@@ -457,7 +530,13 @@ class StateController {
         let openPanel;
         if (this.currentFocus.type === SelectModes.VIEWER) {
             panels = [];
-            for (let panelKey of this.PANEL_ORDER) {
+            let panelOrder = [];
+            if (this.menuType == Menus.GENERAL) {
+                panelOrder = this.GENERAL_MENU_PANEL_ORDER;
+            } else if (this.menuType == Menus.DESIGN) {
+                panelOrder = this.DISPLAY_MENU_PANEL_ORDER;
+            }
+            for (let panelKey of panelOrder) {
                 if (this.panels[panelKey].visible) {
                     panels.push(panelKey);
                 }
@@ -478,6 +557,8 @@ class StateController {
             openPanel: openPanel,
             showPanels: this._showPanels(),
             view: viewKey,
+            menuType: this.menuType,
+            designConfig: this.designConfig,
         };
     }
 

@@ -1,7 +1,7 @@
 const { Utils } = require('./utils.js');
 const { Renderer } = require('./renderer.js');
 const { Colors } = require('./colors.js');
-const { Shapes, PanelKeys, ViewKeys, Text } = require('./constants.js');
+const { Shapes, PanelKeys, ViewKeys, Text, Menus } = require('./constants.js');
 const { PanelType } = require('./panels.js');
 
 class Layout {
@@ -308,9 +308,26 @@ class Dashboard {
         return scrollState && (scrollState.x !== undefined || scrollState.y !== undefined);
     }
 
+    _addMenuTitle(menuType, currentY) {
+        this._setText(Layout.PANEL_LEFT_BUFFER, currentY, ' ' + '═'.repeat(Layout.PANEL_WIDTH - 2), Layout.PANEL_WIDTH - 1, 'center');
+        let text = '';
+        if (menuType === Menus.GENERAL) {
+            text = Text.GENERAL_MENU;
+        } else if (menuType === Menus.DESIGN) {
+            text = Text.DESIGN_MENU;
+        } else if (menuType === Menus.ANIMATION) {
+            text = Text.ANIMATION_MENU;
+        }
+        this._setText(Layout.PANEL_LEFT_BUFFER, currentY, '  ' + text.toUpperCase() + '  ', Layout.PANEL_WIDTH - 2, 'center');
+        return 1;
+    }
+
     _addPanels(config, scrollState, maxY) {
         let currentY = maxY >= Layout.MIN_TITLE_WINDOW_HEIGHT ? this._getTitleHeight() : 0;
+
         if (config.panels) {
+            currentY += this._addMenuTitle(config.menuType, currentY);
+
             for (let i = 0; i < config.panels.length; i++) {
                 let panelKey = config.panels[i];
                 if (currentY >= maxY) {
@@ -351,7 +368,7 @@ class Dashboard {
             this._addPanels(config, scrollState, dimensions.rows);
         }
 
-        this.views[config.view].draw(this.board, {}, config.showPanels);
+        this.views[config.view].draw(this.board, config.designConfig, config.showPanels);
         return this._draw();
     }
 

@@ -1,4 +1,4 @@
-const { VerticalAlign, HorizontalAlign } = require('../constants');
+const { VerticalAlign, HorizontalAlign, Lines, LineTypes } = require('../constants');
 const { Layout } = require('../dashboard');
 const { BaseView } = require('./baseview.js');
 
@@ -133,7 +133,7 @@ class FractalView extends BaseView {
         }
     }
 
-    draw(board, styleConfig, showPanels) {
+    draw(board, designConfig, showPanels) {
         let startX = showPanels ? Layout.FULL_PANEL_WIDTH : Layout.PANEL_LEFT_BUFFER;
         let startY = 0;
         let dimensions = this._getDimensions(showPanels);
@@ -148,7 +148,16 @@ class FractalView extends BaseView {
 
         for (let r = 0; r < Math.min(this.fractal.length, dimensions.rows); r++) {
             for (let c = 0; c < Math.min(this.fractal[0].length, dimensions.columns); c++) {
-                board[startY + r][startX + c].character = this.fractal[r + this.scrolling.y][c + this.scrolling.x];
+                let segment = this.fractal[r + this.scrolling.y][c + this.scrolling.x];
+                if (Lines[segment]) {
+                    if (Lines[segment][designConfig.lineType]) {
+                        board[startY + r][startX + c].character = Lines[segment][designConfig.lineType];
+                    } else {
+                        board[startY + r][startX + c].character = Lines[segment][LineTypes.STANDARD];
+                    }
+                } else {
+                    board[startY + r][startX + c].character = segment;
+                }
             }
         }
     }

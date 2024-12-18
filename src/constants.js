@@ -32,6 +32,9 @@ PanelKeys = {
     MODE:     'mode',
     INVERSE:  'inverse',
     ROTATION: 'rotation',
+
+    LINE_TYPE: 'line_type',
+
     SCROLL:   'scroll',
     CONTROLS: 'controls',
 }
@@ -40,6 +43,12 @@ ViewKeys = {
     FRACTAL: 'fractal',
     SPLASH:  'splash',
     LOADING: 'loading',
+}
+
+Menus = {
+    GENERAL:   'general',
+    DESIGN:    'design',
+    ANIMATION: 'animation',
 }
 
 Rotations = {
@@ -178,12 +187,19 @@ Text = {
     NOT_SUPPORTED: 'Not Supported',
     MORE: 'More',
     SCROLL: 'Scroll',
+    LINE_TYPE: 'Line Type',
+    BOLD: 'Bold',
+    DOUBLE: 'Double',
+    GENERAL_MENU: 'General Menu',
+    DESIGN_MENU: 'Design Menu',
+    ANIMATION_MENU: 'Animation Menu',
 }
 
 module.exports = {
     FractalKeys: FractalKeys,
     PanelKeys: PanelKeys,
     ViewKeys: ViewKeys,
+    Menus: Menus,
     Rotations: Rotations,
     Modes: Modes,
     Shapes: Shapes,
