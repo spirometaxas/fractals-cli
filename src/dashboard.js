@@ -1,7 +1,7 @@
 const { Utils } = require('./utils.js');
 const { Renderer } = require('./renderer.js');
 const { Colors } = require('./colors.js');
-const { Shapes, PanelKeys, ViewKeys, Text, Menus } = require('./constants.js');
+const { Shapes, PanelKeys, ViewKeys, Text, Menus, CharacterType } = require('./constants.js');
 const { PanelType } = require('./panels.js');
 
 class Layout {
@@ -148,6 +148,81 @@ class Dashboard {
         return Layout.TITLE.length + 2;
     }
 
+    _drawListPanel(panel, pos, height) {
+        let currentYPos = 3;
+        let scrollWindowSize = height - 7;
+
+        let startIndex = 0
+        if (panel.getFocusIndex() + 1 > scrollWindowSize) {
+            startIndex = (panel.getFocusIndex() + 1) - scrollWindowSize;
+        }
+
+        for (let i = 0; i < Math.min(panel.getOptions().length, scrollWindowSize); i++) {
+            let option = panel.getOptions()[i + startIndex];
+            if (option.selectable) {
+                this._setText(pos.x + 2, pos.y + currentYPos, String(option.value), Layout.PANEL_WIDTH - 4, 'left');
+                if ((i + startIndex) === panel.getCurrentIndex()) {
+                    this._setTextColor(pos.x + 1, pos.y + currentYPos, Layout.PANEL_WIDTH - 2, Colors.FOCUS_GOLD, true);
+                }
+                if ((i + startIndex) === panel.getFocusIndex()) {
+                    this._setHighlightColor(pos.x + 1, pos.y + currentYPos, Layout.PANEL_WIDTH - 2, Colors.WHITE);
+                }
+            } else {
+                this._setText(pos.x + 2, pos.y + currentYPos, option.value ? '── ' + String(option.value) + ' ──' : '', Layout.PANEL_WIDTH - 4, 'center');
+                this._setTextColor(pos.x + 2, pos.y + currentYPos, Layout.PANEL_WIDTH - 4, Colors.MEDIUM_GRAY, false);
+            }
+            currentYPos++;
+        }
+
+        if (scrollWindowSize < panel.getOptions().length && panel.getFocusIndex() < (panel.getOptions().length - 1)) {
+            this._setText(pos.x + 2, pos.y + height - 4, '..' + Text.MORE.toLowerCase(), Layout.PANEL_WIDTH - 4, 'left');
+            this._setTextColor(pos.x + 2, pos.y + height - 4, Layout.PANEL_WIDTH - 4, Colors.DARK_GRAY, false);
+        }
+    }
+
+    _drawCharacterPanel(panel, pos, height) {
+        let currentYPos = 3;
+        let scrollWindowSize = height - 7;
+
+        let startIndex = 0
+        if (panel.getFocusIndex().row + 1 > scrollWindowSize) {
+            startIndex = (panel.getFocusIndex().row + 1) - scrollWindowSize;
+        }
+        // throw new Error(JSON.stringify(panel.getOptions()));
+
+        for (let i = 0; i < Math.min(panel.getOptions().length, scrollWindowSize); i++) {
+            let optionRow = panel.getOptions()[i + startIndex];
+            let currentXPos = 3;
+            for (let j = 0; j < optionRow.length; j++) {
+                let option = optionRow[j];
+                if (option.type === CharacterType.DEFAULT) {
+                    this._setText(pos.x + 2, pos.y + currentYPos, Text.DEFAULT, Layout.PANEL_WIDTH - 4, 'center');
+                    if ((i + startIndex) === panel.getCurrentIndex().row) {
+                        this._setTextColor(pos.x + 1, pos.y + currentYPos, Layout.PANEL_WIDTH - 2, Colors.FOCUS_GOLD, true);
+                    }
+                    if ((i + startIndex) === panel.getFocusIndex().row) {
+                        this._setHighlightColor(pos.x + 1, pos.y + currentYPos, Layout.PANEL_WIDTH - 2, Colors.WHITE);
+                    }
+                } else if (option.type === CharacterType.CUSTOM) {
+                    this._setText(pos.x + currentXPos, pos.y + currentYPos, option.value, 3, 'center');
+                    if ((i + startIndex) === panel.getCurrentIndex().row && j === panel.getCurrentIndex().col) {
+                        this._setTextColor(pos.x + currentXPos, pos.y + currentYPos, 3, Colors.FOCUS_GOLD, true);
+                    }
+                    if ((i + startIndex) === panel.getFocusIndex().row && j === panel.getFocusIndex().col) {
+                        this._setHighlightColor(pos.x + currentXPos, pos.y + currentYPos, 3, Colors.WHITE);
+                    }
+                    currentXPos += 3;
+                }
+            }
+            currentYPos++;
+        }
+
+        if (scrollWindowSize < panel.getOptions().length && panel.getFocusIndex().row < (panel.getOptions().length - 1)) {
+            this._setText(pos.x + 2, pos.y + height - 4, '..' + Text.MORE.toLowerCase(), Layout.PANEL_WIDTH - 4, 'left');
+            this._setTextColor(pos.x + 2, pos.y + height - 4, Layout.PANEL_WIDTH - 4, Colors.DARK_GRAY, false);
+        }
+    }
+
     _drawOpenPanel(panel, pos, maxY) {
         let height = Math.max(Layout.MIN_PANEL_OPEN_HEIGHT, maxY - pos.y);
         this._insertCharacter({ x: pos.x, y: pos.y }, '┌');
@@ -171,15 +246,15 @@ class Dashboard {
             this._insertCharacter({ x: pos.x + Layout.PANEL_WIDTH - 1, y: pos.y + i }, '│');
         }
 
-        this._setText(pos.x + 2, pos.y + 1, panel.title, Layout.PANEL_WIDTH - 2, 'left');
+        this._setText(pos.x + 2, pos.y + 1, panel.title.toUpperCase(), Layout.PANEL_WIDTH - 2, 'left');
         this._setHighlightColor(pos.x + 1, pos.y + 1, Layout.PANEL_WIDTH - 2, Colors.DARK_GRAY);
         this._setTextColor(pos.x + 1, pos.y + 1, Layout.PANEL_WIDTH - 2, Colors.WHITE, true);
 
         // Draw controls
-        let firstLineText = Text.NAVIGATE + ':<' + Text.UP.toUpperCase() + '|' + Text.DOWN.toUpperCase() + '>';
+        let firstLineText = Text.NAVIGATE + ':<' + Text.ARROWS.toUpperCase() + '>';
         this._setText(pos.x + 2, pos.y + height - 3, firstLineText, Layout.PANEL_WIDTH - 4, 'center');
         this._setTextColor(pos.x + 2, pos.y + height - 3, Layout.PANEL_WIDTH - 4, Colors.MEDIUM_GRAY, false);
-        this._setTextColor(pos.x + 18, pos.y + height - 3, Text.UP.length + Text.DOWN.length + 3, Colors.SKY_BLUE, false);
+        this._setTextColor(pos.x + 19, pos.y + height - 3, Text.ARROWS.length + 3, Colors.SKY_BLUE, false);
 
         let secondLineText = Text.SELECT + ':<' + Text.ENTER.toUpperCase() + '>  ' + Text.EXIT + ':<Q>';
         this._setText(pos.x + 2, pos.y + height - 2, secondLineText, Layout.PANEL_WIDTH - 4, 'center');
@@ -187,41 +262,17 @@ class Dashboard {
         this._setTextColor(pos.x + 13, pos.y + height - 2, Text.ENTER.length + 2, Colors.SKY_BLUE, false);
         this._setTextColor(pos.x + 27, pos.y + height - 2, 1 + 2, Colors.SKY_BLUE, false);
 
-        // Draw items
-        let currentYPos = 3;
-        let scrollWindowSize = height - 7;
-
         if (!panel.visible) {
-            this._setText(pos.x + 2, pos.y + currentYPos, Text.NOT_SUPPORTED, Layout.PANEL_WIDTH - 4, 'center');
-            this._setTextColor(pos.x + 2, pos.y + currentYPos, Layout.PANEL_WIDTH - 4, Colors.MEDIUM_GRAY, false);
+            this._setText(pos.x + 2, pos.y + 3, Text.NOT_SUPPORTED, Layout.PANEL_WIDTH - 4, 'center');
+            this._setTextColor(pos.x + 2, pos.y + 3, Layout.PANEL_WIDTH - 4, Colors.MEDIUM_GRAY, false);
             return;
         }
 
-        let startIndex = 0
-        if (panel.getFocusIndex() + 1 > scrollWindowSize) {
-            startIndex = (panel.getFocusIndex() + 1) - scrollWindowSize;
-        }
-
-        for (let i = 0; i < Math.min(panel.getOptions().length, scrollWindowSize); i++) {
-            let option = panel.getOptions()[i + startIndex];
-            if (option.selectable) {
-                this._setText(pos.x + 2, pos.y + currentYPos, String(option.name), Layout.PANEL_WIDTH - 4, 'left');
-                if ((i + startIndex) === panel.getCurrentIndex()) {
-                    this._setTextColor(pos.x + 1, pos.y + currentYPos, Layout.PANEL_WIDTH - 2, Colors.FOCUS_GOLD, true);
-                }
-                if ((i + startIndex) === panel.getFocusIndex()) {
-                    this._setHighlightColor(pos.x + 1, pos.y + currentYPos, Layout.PANEL_WIDTH - 2, Colors.WHITE);
-                }
-            } else {
-                this._setText(pos.x + 2, pos.y + currentYPos, option.name ? '── ' + String(option.name) + ' ──' : '', Layout.PANEL_WIDTH - 4, 'center');
-                this._setTextColor(pos.x + 2, pos.y + currentYPos, Layout.PANEL_WIDTH - 4, Colors.MEDIUM_GRAY, false);
-            }
-            currentYPos++;
-        }
-
-        if (scrollWindowSize < panel.getOptions().length && panel.getFocusIndex() < (panel.getOptions().length - 1)) {
-            this._setText(pos.x + 2, pos.y + height - 4, '..' + Text.MORE.toLowerCase(), Layout.PANEL_WIDTH - 4, 'left');
-            this._setTextColor(pos.x + 2, pos.y + height - 4, Layout.PANEL_WIDTH - 4, Colors.DARK_GRAY, false);
+        // Draw items
+        if (panel.type === PanelType.LIST) {
+            this._drawListPanel(panel, pos, height);
+        } else if (panel.type === PanelType.CHARACTER) {
+            this._drawCharacterPanel(panel, pos, height);
         }
     }
 
@@ -241,14 +292,14 @@ class Dashboard {
             this._insertCharacter({ x: pos.x + i, y: pos.y + 3 }, '─');
         }
 
-        this._setText(pos.x + 2, pos.y + 1, panel.title, Layout.PANEL_WIDTH - 2, 'left');
+        this._setText(pos.x + 2, pos.y + 1, panel.title.toUpperCase(), Layout.PANEL_WIDTH - 2, 'left');
         this._setHighlightColor(pos.x + 1, pos.y + 1, Layout.PANEL_WIDTH - 2, Colors.DARK_GRAY);
         this._setTextColor(pos.x + 1, pos.y + 1, Layout.PANEL_WIDTH - 2, Colors.WHITE, true);
 
         if (panel.type === PanelType.LIST) {
             this._setText(pos.x + Layout.PANEL_WIDTH - panel.keycode.length - 4, pos.y + 1, '<' + panel.keycode.toUpperCase() + '>', panel.keycode.length + 2, 'right');
             this._setTextColor(pos.x + Layout.PANEL_WIDTH - panel.keycode.length - 4, pos.y + 1, panel.keycode.length + 2, Colors.SKY_BLUE, true);
-        } else if (panel.type === PanelType.VALUE || panel.type === PanelType.SCROLL) {
+        } else if (panel.type === PanelType.VALUE || panel.type === PanelType.CHARACTER || panel.type === PanelType.SCROLL) {
             if (panel.increment) {
                 this._setText(pos.x + Layout.PANEL_WIDTH - 13, pos.y + 1, '+:<' + panel.keycode.toLowerCase() + '> -:<' + panel.keycode.toUpperCase() + '>', 11, 'right');
                 this._setTextColor(pos.x + Layout.PANEL_WIDTH - 5, pos.y + 1, 3, Colors.SKY_BLUE, true);
@@ -261,14 +312,18 @@ class Dashboard {
             }
         }
 
-        if (panel.getValue() !== undefined) {
-            let value = panel.getValue();
+        if (panel.getCurrentDisplayValue() !== undefined) {
+            let value = panel.getCurrentDisplayValue();
             if (value === true) {
                 value = Text.ON;
             } else if (value === false) {
                 value = Text.OFF;
+            } else if (value.type === CharacterType.DEFAULT) {
+                value = Text.DEFAULT;
+            } else if (value.type === CharacterType.CUSTOM) {
+                value = value.value;
             }
-            this._setText(pos.x + 2, pos.y + 2, String(value), Layout.PANEL_WIDTH - 4, 'center');
+            this._setText(pos.x + 2, pos.y + 2, String(value), Layout.PANEL_WIDTH - 5, 'center');
         }
 
         return 4;
@@ -318,7 +373,7 @@ class Dashboard {
         } else if (menuType === Menus.ANIMATION) {
             text = Text.ANIMATION_MENU;
         }
-        this._setText(Layout.PANEL_LEFT_BUFFER, currentY, '  ' + text.toUpperCase() + '  ', Layout.PANEL_WIDTH - 2, 'center');
+        this._setText(Layout.PANEL_LEFT_BUFFER, currentY, '  ' + text.toUpperCase() + '  ', Layout.PANEL_WIDTH - 1, 'center');
         return 1;
     }
 

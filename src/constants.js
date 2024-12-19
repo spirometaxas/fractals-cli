@@ -34,6 +34,7 @@ PanelKeys = {
     ROTATION: 'rotation',
 
     LINE_TYPE: 'line_type',
+    CHARACTER: 'character',
 
     SCROLL:   'scroll',
     CONTROLS: 'controls',
@@ -136,12 +137,21 @@ Lines = {
         STANDARD: '╲',
         BOLD:     '\u001b[1m╲\u001b[22m',
     },
+    '_': {
+        STANDARD: '_',
+        BOLD:     '\u001b[1m_\u001b[22m',
+    }
 }
 
 LineTypes = {
     STANDARD: 'STANDARD',
     BOLD:     'BOLD',
     DOUBLE:   'DOUBLE',
+}
+
+CharacterType = {
+    DEFAULT: 'DEFAULT',
+    CUSTOM: 'CUSTOM',
 }
 
 VerticalAlign = {
@@ -193,6 +203,9 @@ Text = {
     GENERAL_MENU: 'General Menu',
     DESIGN_MENU: 'Design Menu',
     ANIMATION_MENU: 'Animation Menu',
+    CHARACTER: 'Character',
+    DEFAULT: 'Default',
+    ARROWS: 'Arrows',
 }
 
 module.exports = {
@@ -205,6 +218,7 @@ module.exports = {
     Shapes: Shapes,
     Lines: Lines,
     LineTypes: LineTypes,
+    CharacterType: CharacterType,
     Text: Text,
     VerticalAlign,
     HorizontalAlign,

@@ -1,5 +1,5 @@
 const { Fractal } = require('./Fractal');
-const { FractalKeys, FractalData, PanelKeys, ViewKeys, Modes, Menus } = require('./constants');
+const { FractalKeys, FractalData, PanelKeys, ViewKeys, Modes, Menus, CharacterType } = require('./constants');
 const { Cache } = require('./cache');
 const { Worker } = require('worker_threads');
 const path = require('path');
@@ -63,6 +63,7 @@ class StateController {
 
     DISPLAY_MENU_PANEL_ORDER = [
         PanelKeys.LINE_TYPE,
+        PanelKeys.CHARACTER,
         PanelKeys.SCROLL,
         PanelKeys.CONTROLS,
     ];
@@ -71,6 +72,7 @@ class StateController {
     currentFractalKey = FractalKeys.SIERPINSKI_TRIANGLE;  // Default to Sierpinski Triangle
     designConfig = {
         lineType: LineTypes.STANDARD,
+        character: undefined,
     };
 
     constructor(config, views, panels) {
@@ -198,6 +200,30 @@ class StateController {
             this.panels[PanelKeys.LINE_TYPE].setOnEnterCallback((selectedKey) => {
                 this._onLineTypeChange(selectedKey);
             });
+            this.panels[PanelKeys.LINE_TYPE].setOnFocusCallback((selectedKey) => {
+                this._onLineTypeChange(selectedKey);
+            });
+            this.panels[PanelKeys.LINE_TYPE].setOnExitCallback((selectedKey) => {
+                this._onLineTypeChange(selectedKey);
+            });
+        }
+
+        // Character Panel
+        if (fractalConfig.supportsCharacter(currentFractalModeKey)) {
+            this.panels[PanelKeys.CHARACTER].visible = true;
+        } else {
+            this.panels[PanelKeys.CHARACTER].visible = false;
+        }
+        if (init) {
+            this.panels[PanelKeys.CHARACTER].setOnEnterCallback((selectedCharacter) => {
+                this._onCharacterChange(selectedCharacter);
+            });
+            this.panels[PanelKeys.CHARACTER].setOnFocusCallback((selectedCharacter) => {
+                this._onCharacterChange(selectedCharacter);
+            });
+            this.panels[PanelKeys.CHARACTER].setOnExitCallback((selectedCharacter) => {
+                this._onCharacterChange(selectedCharacter);
+            });
         }
     }
 
@@ -266,6 +292,15 @@ class StateController {
         this._updatePanels();
     }
 
+    _onCharacterChange(newCharacter) {
+        if (newCharacter.type === CharacterType.DEFAULT) {
+            this.designConfig.character = undefined;
+        } else if (newCharacter.type === CharacterType.CUSTOM) {
+            this.designConfig.character = newCharacter.value;
+        }
+        this._updatePanels();
+    }
+
     runLoadingTask(onFinished, onError) {
         this.loadingTask.workerThread = new Worker(path.join(__dirname, './fractalthread.js'), { workerData: this.loadingTask.getWorkerData() });
         this.loadingTask.workerThread.on('message', (data) => {
@@ -320,8 +355,7 @@ class StateController {
 
     processUp() {
         if (this.currentFocus.type === SelectModes.PANEL) {
-            this.panels[this.currentFocus.id].processUp();
-            return true;
+            return this.panels[this.currentFocus.id].processUp();
         } else if (this.currentFocus.type === SelectModes.VIEWER) {
             return this.views[ViewKeys.FRACTAL].scrollUp(this._showPanels());
         }
@@ -330,8 +364,7 @@ class StateController {
 
     processDown() {
         if (this.currentFocus.type === SelectModes.PANEL) {
-            this.panels[this.currentFocus.id].processDown();
-            return true;
+            return this.panels[this.currentFocus.id].processDown();
         } else if (this.currentFocus.type === SelectModes.VIEWER) {
             return this.views[ViewKeys.FRACTAL].scrollDown(this._showPanels());
         }
@@ -339,13 +372,17 @@ class StateController {
     }
 
     processLeft() {
-        if (this.currentFocus.type === SelectModes.VIEWER) {
+        if (this.currentFocus.type === SelectModes.PANEL) {
+            return this.panels[this.currentFocus.id].processLeft();
+        } else if (this.currentFocus.type === SelectModes.VIEWER) {
             return this.views[ViewKeys.FRACTAL].scrollLeft(this._showPanels());
         }
     }
 
     processRight() {
-        if (this.currentFocus.type === SelectModes.VIEWER) {
+        if (this.currentFocus.type === SelectModes.PANEL) {
+            return this.panels[this.currentFocus.id].processRight();
+        } else if (this.currentFocus.type === SelectModes.VIEWER) {
             return this.views[ViewKeys.FRACTAL].scrollRight(this._showPanels());
         }
     }
@@ -503,6 +540,15 @@ class StateController {
             return true;
         }
 
+        return false;
+    }
+
+    processK() {
+        if (this.currentFocus.type === SelectModes.VIEWER) {
+            this.currentFocus = { type: SelectModes.PANEL, id: PanelKeys.CHARACTER };
+            this.panels[PanelKeys.CHARACTER].processOpen();
+            return true;
+        }
         return false;
     }
 

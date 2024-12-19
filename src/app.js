@@ -20,6 +20,7 @@ const KeyMap = {
     LETTER_F: 'F',
     LETTER_G: 'G',
     LETTER_I: 'I',
+    LETTER_K: 'K',
     LETTER_L: 'L',
     LETTER_M: 'M',
     LETTER_N: 'N',
@@ -104,6 +105,8 @@ class App {
                     handled = this.stateController.processS(key === KeyMap.LETTER_S);
                 } else if (key === KeyMap.LETTER_I || key === KeyMap.LETTER_I.toLowerCase()) {
                     handled = this.stateController.processI();
+                } else if (key === KeyMap.LETTER_K || key === KeyMap.LETTER_K.toLowerCase()) {
+                    handled = this.stateController.processK();
                 } else if (key === KeyMap.LETTER_R || key === KeyMap.LETTER_R.toLowerCase()) {
                     handled = this.stateController.processR();
                 } else if (key === KeyMap.LETTER_M || key === KeyMap.LETTER_M.toLowerCase()) {

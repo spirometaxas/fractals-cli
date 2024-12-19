@@ -155,6 +155,12 @@ class FractalView extends BaseView {
                     } else {
                         board[startY + r][startX + c].character = Lines[segment][LineTypes.STANDARD];
                     }
+                } else if (designConfig.character) {
+                    if (segment === Shapes.SPACE) {
+                        board[startY + r][startX + c].character = segment;
+                    } else {
+                        board[startY + r][startX + c].character = designConfig.character;
+                    }
                 } else {
                     board[startY + r][startX + c].character = segment;
                 }

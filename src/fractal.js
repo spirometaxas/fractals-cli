@@ -273,6 +273,13 @@ class Fractal {
         }
     }
 
+    supportsCharacter(modeKey) {
+        if (!modeKey) {
+            modeKey = this.mode;
+        }
+        return this.impl.CONFIG.MODE_OPTIONS[modeKey] && this.impl.CONFIG.MODE_OPTIONS[modeKey].CHARACTER;
+    }
+
     getConfig() {
         return {
             step: this.step,
