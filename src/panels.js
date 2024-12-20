@@ -70,12 +70,51 @@ class OpenablePanel extends Panel {
 
 }
 
+const PanelOptionType = {
+    LIST_ITEM: 'LIST_ITEM',
+    GRID_ITEM: 'GRID_ITEM',
+    EMPTY:     'EMPTY',
+}
+
 class PanelOption {
 
-    constructor(value, key, selectable=true) {
+    constructor(value, key, type, selectable=true) {
         this.value = value;
         this.key = key;
+        this.type = type;
         this.selectable = selectable;
+    }
+
+}
+
+class ListItem extends PanelOption {
+
+    constructor(value, key, selectable=true) {
+        super(value, key, PanelOptionType.LIST_ITEM, selectable);
+    }
+
+}
+
+class GridItem extends PanelOption {
+
+    constructor(value, key, selectable=true) {
+        super(value, key, PanelOptionType.GRID_ITEM, selectable);
+    }
+
+}
+
+class TitleItem extends PanelOption {
+
+    constructor(value) {
+        super(value, undefined, PanelOptionType.LIST_ITEM, false);
+    }
+
+}
+
+class EmptyItem extends PanelOption {
+
+    constructor() {
+        super('', undefined, PanelOptionType.EMPTY, false);
     }
 
 }
@@ -349,18 +388,6 @@ class CharacterMap {
         [ '`', '~', 'Σ', 'π', '©', '®', '°', '¡', '¿', '±' ],
         [ '£', '€', '¥', '₿', '¢', '▲', '▼', '•', '●', '█' ],
     ];
-
-    static PANEL_ORDER = [
-        { type: CharacterType.DEFAULT },
-        { type: undefined },
-        { type: CharacterType.CUSTOM, values: CharacterMap.UPPERCASE_LETTERS },
-        { type: undefined },
-        { type: CharacterType.CUSTOM, values: CharacterMap.LOWERCASE_LETTERS },
-        { type: undefined },
-        { type: CharacterType.CUSTOM, values: CharacterMap.NUMBERS },
-        { type: undefined },
-        { type: CharacterType.CUSTOM, values: CharacterMap.SPECIAL },
-    ];
     
     constructor(type, value=undefined) {
         this.type = type;
@@ -378,31 +405,18 @@ class CharacterMap {
 
 class GridPanel extends OpenablePanel {
 
-    constructor(title, keycode) {
+    constructor(title, keycode, grid) {
         super(title, keycode, PanelType.CHARACTER);
+        this.grid = grid;
         this.currentIndex = { row: 0, col: 0 };
-        this.focusIndex = { row: 0, col: 0 };
-        this.grid = this._generateGrid();
-    }
-
-    _generateGrid() {
-        let grid = [];
-        for (let section of CharacterMap.PANEL_ORDER) {
-            if (section.type === CharacterType.DEFAULT) {
-                grid.push([ { type: CharacterType.DEFAULT } ]);
-            } else if (section.type === CharacterType.CUSTOM) {
-                for (let characterRow of section.values) {
-                    let row = [];
-                    for (let character of characterRow) {
-                        row.push({ type: CharacterType.CUSTOM, key: character, value: character });
-                    }
-                    grid.push(row);
-                }
-            } else if (section.type === undefined) {
-                grid.push([ { type: undefined } ]);
+        while (!this.grid[this.currentIndex.row][0].selectable) {
+            this.currentIndex.row++;
+            if (this.currentIndex.row >= this.grid.length) {
+                this.currentIndex.row = 0;
+                break;
             }
         }
-        return grid;
+        this.focusIndex = { row: this.currentIndex.row, col: 0 };
     }
 
     getOptions() {
@@ -410,24 +424,20 @@ class GridPanel extends OpenablePanel {
     }
 
     getCurrentDisplayValue() {
-        return new CharacterMap(
-            this.grid[this.currentIndex.row][this.currentIndex.col].type,
-            this.grid[this.currentIndex.row][this.currentIndex.col].value
-        );
+        let currentItem = this.grid[this.currentIndex.row][this.currentIndex.col];
+        if (currentItem.key === CharacterType.DEFAULT) {
+            return Text.DEFAULT;
+        } else {
+            return this.grid[this.currentIndex.row][this.currentIndex.col].value;
+        }
     }
 
     getCurrentKey() {
-        return new CharacterMap(
-            this.grid[this.currentIndex.row][this.currentIndex.col].type,
-            this.grid[this.currentIndex.row][this.currentIndex.col].key
-        );
+        return this.grid[this.currentIndex.row][this.currentIndex.col];
     }
 
     getFocusKey() {
-        return new CharacterMap(
-            this.grid[this.focusIndex.row][this.focusIndex.col].type,
-            this.grid[this.focusIndex.row][this.focusIndex.col].key
-        );
+        return this.grid[this.focusIndex.row][this.focusIndex.col];
     }
 
     getCurrentIndex() {
@@ -443,7 +453,7 @@ class GridPanel extends OpenablePanel {
         if (this.focusIndex.row < 0) {
             this.focusIndex.row = this.grid.length - 1;
         }
-        while (this.grid[this.focusIndex.row][0].type === undefined) {
+        while (!this.grid[this.focusIndex.row][0].selectable) {
             this.focusIndex.row--;
             if (this.focusIndex.row < 0) {
                 this.focusIndex.row = this.grid.length - 1;
@@ -463,7 +473,7 @@ class GridPanel extends OpenablePanel {
         if (this.focusIndex.row >= this.grid.length) {
             this.focusIndex.row = 0;
         }
-        while (this.grid[this.focusIndex.row][0].type === undefined) {
+        while (!this.grid[this.focusIndex.row][0].selectable) {
             this.focusIndex.row++;
             if (this.focusIndex.row >= this.grid.length) {
                 this.focusIndex.row = 0;
@@ -485,7 +495,7 @@ class GridPanel extends OpenablePanel {
             if (this.focusIndex.row < 0) {
                 this.focusIndex.row = this.grid.length - 1;
             }
-            while (this.grid[this.focusIndex.row][0].type === undefined) {
+            while (!this.grid[this.focusIndex.row][0].selectable) {
                 this.focusIndex.row--;
                 if (this.focusIndex.row < 0) {
                     this.focusIndex.row = this.grid.length - 1;
@@ -506,7 +516,7 @@ class GridPanel extends OpenablePanel {
             if (this.focusIndex.row >= this.grid.length) {
                 this.focusIndex.row = 0;
             }
-            while (this.grid[this.focusIndex.row][0].type === undefined) {
+            while (!this.grid[this.focusIndex.row][0].selectable) {
                 this.focusIndex.row++;
                 if (this.focusIndex.row >= this.grid.length) {
                     this.focusIndex.row = 0;
@@ -525,19 +535,13 @@ class GridPanel extends OpenablePanel {
         let selectedValue = this.grid[this.focusIndex.row][this.focusIndex.col];
         this.currentIndex = { row: this.focusIndex.row, col: this.focusIndex.col };
         if ((previousValue.type !== selectedValue.type || previousValue.key !== selectedValue.key) && this.onEnterCallback) {
-            this.onEnterCallback(new CharacterMap(
-                this.grid[this.currentIndex.row][this.currentIndex.col].type,
-                this.grid[this.currentIndex.row][this.currentIndex.col].key
-            ));
+            this.onEnterCallback(this.getCurrentKey());
         }
     }
 
     processOpen() {
         if (this.onFocusCallback) {
-            this.onFocusCallback(new CharacterMap(
-                this.grid[this.focusIndex.row][this.focusIndex.col].type,
-                this.grid[this.focusIndex.row][this.focusIndex.col].key
-            ));
+            this.onFocusCallback(this.getCurrentKey());
         }
     }
 
@@ -557,37 +561,37 @@ class PanelManager {
 
         // Fractal Panel
         let fractalOptions = [
-            new PanelOption(Text.FRACTAL_SHAPES, undefined, false),
-            new PanelOption(FractalConfig[FractalKeys.SIERPINSKI_TRIANGLE].name, FractalKeys.SIERPINSKI_TRIANGLE),
-            new PanelOption(FractalConfig[FractalKeys.SIERPINSKI_CARPET].name, FractalKeys.SIERPINSKI_CARPET),
-            new PanelOption(FractalConfig[FractalKeys.SIERPINSKI_HEXAGON].name, FractalKeys.SIERPINSKI_HEXAGON),
-            new PanelOption(FractalConfig[FractalKeys.HEXAFLAKE].name, FractalKeys.HEXAFLAKE),
-            new PanelOption(FractalConfig[FractalKeys.KOCH_SNOWFLAKE].name, FractalKeys.KOCH_SNOWFLAKE),
-            new PanelOption(FractalConfig[FractalKeys.KOCH_ANTISNOWFLAKE].name, FractalKeys.KOCH_ANTISNOWFLAKE),
-            new PanelOption(FractalConfig[FractalKeys.TRIFLAKE].name, FractalKeys.TRIFLAKE),
+            new TitleItem(Text.FRACTAL_SHAPES),
+            new ListItem(FractalConfig[FractalKeys.SIERPINSKI_TRIANGLE].name, FractalKeys.SIERPINSKI_TRIANGLE),
+            new ListItem(FractalConfig[FractalKeys.SIERPINSKI_CARPET].name, FractalKeys.SIERPINSKI_CARPET),
+            new ListItem(FractalConfig[FractalKeys.SIERPINSKI_HEXAGON].name, FractalKeys.SIERPINSKI_HEXAGON),
+            new ListItem(FractalConfig[FractalKeys.HEXAFLAKE].name, FractalKeys.HEXAFLAKE),
+            new ListItem(FractalConfig[FractalKeys.KOCH_SNOWFLAKE].name, FractalKeys.KOCH_SNOWFLAKE),
+            new ListItem(FractalConfig[FractalKeys.KOCH_ANTISNOWFLAKE].name, FractalKeys.KOCH_ANTISNOWFLAKE),
+            new ListItem(FractalConfig[FractalKeys.TRIFLAKE].name, FractalKeys.TRIFLAKE),
 
-            new PanelOption('', undefined, false),
-            new PanelOption(Text.FRACTAL_PATTERNS, undefined, false),
-            new PanelOption(FractalConfig[FractalKeys.CANTOR_SET].name, FractalKeys.CANTOR_SET),
-            new PanelOption(FractalConfig[FractalKeys.CANTOR_DUST].name, FractalKeys.CANTOR_DUST),
-            new PanelOption(FractalConfig[FractalKeys.FIBONACCI_WORD_FRACTAL].name, FractalKeys.FIBONACCI_WORD_FRACTAL),
-            new PanelOption(FractalConfig[FractalKeys.H_TREE].name, FractalKeys.H_TREE),
-            new PanelOption(FractalConfig[FractalKeys.MINKOWSKI_SAUSAGE].name, FractalKeys.MINKOWSKI_SAUSAGE),
-            new PanelOption(FractalConfig[FractalKeys.SIERPINSKI_MAZE].name, FractalKeys.SIERPINSKI_MAZE),
-            new PanelOption(FractalConfig[FractalKeys.T_SQUARE].name, FractalKeys.T_SQUARE),
-            new PanelOption(FractalConfig[FractalKeys.VICSEK_FRACTAL].name, FractalKeys.VICSEK_FRACTAL),
-            new PanelOption(FractalConfig[FractalKeys.V_TREE].name, FractalKeys.V_TREE),
+            new EmptyItem(),
+            new TitleItem(Text.FRACTAL_PATTERNS),
+            new ListItem(FractalConfig[FractalKeys.CANTOR_SET].name, FractalKeys.CANTOR_SET),
+            new ListItem(FractalConfig[FractalKeys.CANTOR_DUST].name, FractalKeys.CANTOR_DUST),
+            new ListItem(FractalConfig[FractalKeys.FIBONACCI_WORD_FRACTAL].name, FractalKeys.FIBONACCI_WORD_FRACTAL),
+            new ListItem(FractalConfig[FractalKeys.H_TREE].name, FractalKeys.H_TREE),
+            new ListItem(FractalConfig[FractalKeys.MINKOWSKI_SAUSAGE].name, FractalKeys.MINKOWSKI_SAUSAGE),
+            new ListItem(FractalConfig[FractalKeys.SIERPINSKI_MAZE].name, FractalKeys.SIERPINSKI_MAZE),
+            new ListItem(FractalConfig[FractalKeys.T_SQUARE].name, FractalKeys.T_SQUARE),
+            new ListItem(FractalConfig[FractalKeys.VICSEK_FRACTAL].name, FractalKeys.VICSEK_FRACTAL),
+            new ListItem(FractalConfig[FractalKeys.V_TREE].name, FractalKeys.V_TREE),
 
-            new PanelOption('', undefined, false),
-            new PanelOption(Text.SPACE_FILLING_CURVES, undefined, false),
-            new PanelOption(FractalConfig[FractalKeys.DRAGON_CURVE].name, FractalKeys.DRAGON_CURVE),
-            new PanelOption(FractalConfig[FractalKeys.HILBERT_CURVE].name, FractalKeys.HILBERT_CURVE),
-            new PanelOption(FractalConfig[FractalKeys.MOORE_CURVE].name, FractalKeys.MOORE_CURVE),
-            new PanelOption(FractalConfig[FractalKeys.PEANO_CURVE].name, FractalKeys.PEANO_CURVE),
-            new PanelOption(FractalConfig[FractalKeys.GREEK_CROSS].name, FractalKeys.GREEK_CROSS),
-            new PanelOption(FractalConfig[FractalKeys.GOSPER_CURVE].name, FractalKeys.GOSPER_CURVE),
-            new PanelOption(FractalConfig[FractalKeys.SIERPINSKI_ARROWHEAD].name, FractalKeys.SIERPINSKI_ARROWHEAD),
-            new PanelOption(FractalConfig[FractalKeys.SIERPINSKI_CURVE].name, FractalKeys.SIERPINSKI_CURVE),
+            new EmptyItem(),
+            new TitleItem(Text.SPACE_FILLING_CURVES),
+            new ListItem(FractalConfig[FractalKeys.DRAGON_CURVE].name, FractalKeys.DRAGON_CURVE),
+            new ListItem(FractalConfig[FractalKeys.HILBERT_CURVE].name, FractalKeys.HILBERT_CURVE),
+            new ListItem(FractalConfig[FractalKeys.MOORE_CURVE].name, FractalKeys.MOORE_CURVE),
+            new ListItem(FractalConfig[FractalKeys.PEANO_CURVE].name, FractalKeys.PEANO_CURVE),
+            new ListItem(FractalConfig[FractalKeys.GREEK_CROSS].name, FractalKeys.GREEK_CROSS),
+            new ListItem(FractalConfig[FractalKeys.GOSPER_CURVE].name, FractalKeys.GOSPER_CURVE),
+            new ListItem(FractalConfig[FractalKeys.SIERPINSKI_ARROWHEAD].name, FractalKeys.SIERPINSKI_ARROWHEAD),
+            new ListItem(FractalConfig[FractalKeys.SIERPINSKI_CURVE].name, FractalKeys.SIERPINSKI_CURVE),
         ];
         let fractalPanel = new ListPanel(Text.FRACTAL, 'f', fractalOptions);
         panelMap[PanelKeys.FRACTAL] = fractalPanel;
@@ -602,9 +606,9 @@ class PanelManager {
 
         // Mode Panel
         let modeOptions = [
-            new PanelOption(Text.SHAPES, Modes.SHAPES),
-            new PanelOption(Text.BLOCKS, Modes.BLOCKS),
-            new PanelOption(Text.LINES, Modes.LINES),
+            new ListItem(Text.SHAPES, Modes.SHAPES),
+            new ListItem(Text.BLOCKS, Modes.BLOCKS),
+            new ListItem(Text.LINES, Modes.LINES),
         ];
         let modePanel = new ListPanel(Text.MODE, 'm', modeOptions);
         panelMap[PanelKeys.MODE] = modePanel;
@@ -615,11 +619,11 @@ class PanelManager {
 
         // Rotation Panel
         let rotationOptions = [
-            new PanelOption(Text.STANDARD, Rotations.STANDARD),
-            new PanelOption(Text.LEFT, Rotations.LEFT),
-            new PanelOption(Text.RIGHT, Rotations.RIGHT),
-            new PanelOption(Text.FLIP, Rotations.FLIP),
-            new PanelOption(Text.DIAGONAL, Rotations.DIAGONAL),
+            new ListItem(Text.STANDARD, Rotations.STANDARD),
+            new ListItem(Text.LEFT, Rotations.LEFT),
+            new ListItem(Text.RIGHT, Rotations.RIGHT),
+            new ListItem(Text.FLIP, Rotations.FLIP),
+            new ListItem(Text.DIAGONAL, Rotations.DIAGONAL),
         ];
         let rotationPanel = new ListPanel(Text.ROTATION, 'r', rotationOptions);
         panelMap[PanelKeys.ROTATION] = rotationPanel;
@@ -634,15 +638,26 @@ class PanelManager {
 
         // Line Type Panel
         let lineTypeOptions = [
-            new PanelOption(Text.STANDARD, LineTypes.STANDARD),
-            new PanelOption(Text.BOLD, LineTypes.BOLD),
-            new PanelOption(Text.DOUBLE, LineTypes.DOUBLE),
+            new ListItem(Text.STANDARD, LineTypes.STANDARD),
+            new ListItem(Text.BOLD, LineTypes.BOLD),
+            new ListItem(Text.DOUBLE, LineTypes.DOUBLE),
         ];
         let lineTypePanel = new ListPanel(Text.LINE_TYPE, 'l', lineTypeOptions);
         panelMap[PanelKeys.LINE_TYPE] = lineTypePanel;
 
         // Character Panel
-        let characterPanel = new GridPanel(Text.CHARACTER, 'k');
+        let characterGrid = [
+            [ new ListItem(CharacterType.DEFAULT, CharacterType.DEFAULT) ],
+            [ new EmptyItem() ],
+            ...CharacterMap.UPPERCASE_LETTERS.map(row => row.map(character => new GridItem(character, character))),
+            [ new EmptyItem() ],
+            ...CharacterMap.LOWERCASE_LETTERS.map(row => row.map(character => new GridItem(character, character))),
+            [ new EmptyItem() ],
+            ...CharacterMap.NUMBERS.map(row => row.map(character => new GridItem(character, character))),
+            [ new EmptyItem() ],
+            ...CharacterMap.SPECIAL.map(row => row.map(character => new GridItem(character, character))),
+        ];
+        let characterPanel = new GridPanel(Text.CHARACTER, 'k', characterGrid);
         panelMap[PanelKeys.CHARACTER] = characterPanel;
 
         return panelMap;
@@ -653,4 +668,5 @@ class PanelManager {
 module.exports = {
     PanelManager: PanelManager,
     PanelType: PanelType,
+    PanelOptionType: PanelOptionType,
 }

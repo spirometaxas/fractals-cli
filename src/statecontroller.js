@@ -293,9 +293,9 @@ class StateController {
     }
 
     _onCharacterChange(newCharacter) {
-        if (newCharacter.type === CharacterType.DEFAULT) {
+        if (newCharacter.key === CharacterType.DEFAULT) {
             this.designConfig.character = undefined;
-        } else if (newCharacter.type === CharacterType.CUSTOM) {
+        } else {
             this.designConfig.character = newCharacter.value;
         }
         this._updatePanels();

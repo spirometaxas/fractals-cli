@@ -2,7 +2,7 @@ const { Utils } = require('./utils.js');
 const { Renderer } = require('./renderer.js');
 const { Colors } = require('./colors.js');
 const { Shapes, PanelKeys, ViewKeys, Text, Menus, CharacterType } = require('./constants.js');
-const { PanelType } = require('./panels.js');
+const { PanelType, PanelOptionType } = require('./panels.js');
 
 class Layout {
 
@@ -188,22 +188,21 @@ class Dashboard {
         if (panel.getFocusIndex().row + 1 > scrollWindowSize) {
             startIndex = (panel.getFocusIndex().row + 1) - scrollWindowSize;
         }
-        // throw new Error(JSON.stringify(panel.getOptions()));
 
         for (let i = 0; i < Math.min(panel.getOptions().length, scrollWindowSize); i++) {
             let optionRow = panel.getOptions()[i + startIndex];
             let currentXPos = 3;
             for (let j = 0; j < optionRow.length; j++) {
                 let option = optionRow[j];
-                if (option.type === CharacterType.DEFAULT) {
-                    this._setText(pos.x + 2, pos.y + currentYPos, Text.DEFAULT, Layout.PANEL_WIDTH - 4, 'center');
+                if (option.type === PanelOptionType.LIST_ITEM) {
+                    this._setText(pos.x + 2, pos.y + currentYPos, option.key === CharacterType.DEFAULT ? Text.DEFAULT : option.value, Layout.PANEL_WIDTH - 4, 'center');
                     if ((i + startIndex) === panel.getCurrentIndex().row) {
                         this._setTextColor(pos.x + 1, pos.y + currentYPos, Layout.PANEL_WIDTH - 2, Colors.FOCUS_GOLD, true);
                     }
                     if ((i + startIndex) === panel.getFocusIndex().row) {
                         this._setHighlightColor(pos.x + 1, pos.y + currentYPos, Layout.PANEL_WIDTH - 2, Colors.WHITE);
                     }
-                } else if (option.type === CharacterType.CUSTOM) {
+                } else if (option.type === PanelOptionType.GRID_ITEM) {
                     this._setText(pos.x + currentXPos, pos.y + currentYPos, option.value, 3, 'center');
                     if ((i + startIndex) === panel.getCurrentIndex().row && j === panel.getCurrentIndex().col) {
                         this._setTextColor(pos.x + currentXPos, pos.y + currentYPos, 3, Colors.FOCUS_GOLD, true);
@@ -318,10 +317,6 @@ class Dashboard {
                 value = Text.ON;
             } else if (value === false) {
                 value = Text.OFF;
-            } else if (value.type === CharacterType.DEFAULT) {
-                value = Text.DEFAULT;
-            } else if (value.type === CharacterType.CUSTOM) {
-                value = value.value;
             }
             this._setText(pos.x + 2, pos.y + 2, String(value), Layout.PANEL_WIDTH - 5, 'center');
         }
