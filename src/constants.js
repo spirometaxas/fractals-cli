@@ -1,4 +1,4 @@
-FractalKeys = {
+const FractalKeys = {
     SIERPINSKI_TRIANGLE:    'sierpinski_triangle',
     SIERPINSKI_CARPET:      'sierpinski_carpet',
     SIERPINSKI_HEXAGON:     'sierpinski_hexagon',
@@ -25,7 +25,7 @@ FractalKeys = {
     SIERPINSKI_CURVE:       'sierpinski_curve',
 }
 
-PanelKeys = {
+const PanelKeys = {
     FRACTAL:  'fractal',
     N_STEP:   'n_step',
     STEP:     'step',
@@ -40,19 +40,19 @@ PanelKeys = {
     CONTROLS: 'controls',
 }
 
-ViewKeys = {
+const ViewKeys = {
     FRACTAL: 'fractal',
     SPLASH:  'splash',
     LOADING: 'loading',
 }
 
-Menus = {
+const Menus = {
     GENERAL:   'general',
     DESIGN:    'design',
     ANIMATION: 'animation',
 }
 
-Rotations = {
+const Rotations = {
     STANDARD: 'standard',
     FLIP:     'flip',
     LEFT:     'left',
@@ -60,113 +60,25 @@ Rotations = {
     DIAGONAL: 'diagonal',
 }
 
-Modes = {
+const Modes = {
     BLOCKS: 'blocks',
     LINES:  'lines',
     SHAPES: 'shapes',
 }
 
-Shapes = {
-    TRIANGLE_UP:   '▲',
-    TRIANGLE_DOWN: '▼',
-    BLOCK:         '█',
-    SPACE:         ' ',
-}
-
-Lines = {
-    '─': {
-        STANDARD: '─',
-        BOLD:     '━',
-        DOUBLE:   '═',
-    },
-    '│': {
-        STANDARD: '│',
-        BOLD:     '┃',
-        DOUBLE:   '║',
-    },
-    '┌': {
-        STANDARD: '┌',
-        BOLD:     '┏',
-        DOUBLE:   '╔',
-    },
-    '┐': {
-        STANDARD: '┐',
-        BOLD:     '┓',
-        DOUBLE:   '╗',
-    },
-    '┘': {
-        STANDARD: '┘',
-        BOLD:     '┛',
-        DOUBLE:   '╝',
-    },
-    '└': {
-        STANDARD: '└',
-        BOLD:     '┗',
-        DOUBLE:   '╚',
-    },
-    '┴': {
-        STANDARD: '┴',
-        BOLD:     '┻',
-        DOUBLE:   '╩',
-    },
-    '├': {
-        STANDARD: '├',
-        BOLD:     '┣',
-        DOUBLE:   '╠',
-    },
-    '┤': {
-        STANDARD: '┤',
-        BOLD:     '┫',
-        DOUBLE:   '╣',
-    },
-    '┬': {
-        STANDARD: '┬',
-        BOLD:     '┳',
-        DOUBLE:   '╦',
-    },
-    '┼': {
-        STANDARD: '┼',
-        BOLD:     '╋',
-        DOUBLE:   '╬',
-    },
-    '╱': {
-        STANDARD: '╱',
-        BOLD:     '\u001b[1m╱\u001b[22m',
-    },
-    '╲': {
-        STANDARD: '╲',
-        BOLD:     '\u001b[1m╲\u001b[22m',
-    },
-    '_': {
-        STANDARD: '_',
-        BOLD:     '\u001b[1m_\u001b[22m',
-    }
-}
-
-LineTypes = {
-    STANDARD: 'STANDARD',
-    BOLD:     'BOLD',
-    DOUBLE:   'DOUBLE',
-}
-
-CharacterType = {
-    DEFAULT: 'DEFAULT',
-    CUSTOM: 'CUSTOM',
-}
-
-VerticalAlign = {
+const VerticalAlign = {
     TOP:    'TOP',
     CENTER: 'CENTER',
     BOTTOM: 'BOTTOM',
 }
 
-HorizontalAlign = {
+const HorizontalAlign = {
     LEFT:   'LEFT',
     CENTER: 'CENTER',
     RIGHT:  'RIGHT',
 }
 
-Text = {
+const Text = {
     FRACTAL: 'Fractal',
     FRACTAL_SHAPES: 'Fractal Shapes',
     FRACTAL_PATTERNS: 'Fractal Patterns',
@@ -215,10 +127,6 @@ module.exports = {
     Menus: Menus,
     Rotations: Rotations,
     Modes: Modes,
-    Shapes: Shapes,
-    Lines: Lines,
-    LineTypes: LineTypes,
-    CharacterType: CharacterType,
     Text: Text,
     VerticalAlign,
     HorizontalAlign,

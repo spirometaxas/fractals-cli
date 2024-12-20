@@ -1,5 +1,6 @@
 const { SierpinskiHexagon } = require('./sierpinskiHexagon');
-const { Modes, Shapes, VerticalAlign, HorizontalAlign } = require('../constants');
+const { Modes, VerticalAlign, HorizontalAlign } = require('../constants');
+const { Shapes } = require('../characters.js');
 const { Utils } = require('../utils');
 
 class KochSnowflake {

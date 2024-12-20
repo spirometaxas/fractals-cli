@@ -1,4 +1,5 @@
-const { Text, FractalKeys, PanelKeys, Modes, Rotations, CharacterType } = require('./constants.js');
+const { Text, FractalKeys, PanelKeys, Modes, Rotations } = require('./constants.js');
+const { CharacterMap, LineTypes } = require('./characters.js');
 const { FractalConfig } = require('./fractal.js');
 
 class PanelType {
@@ -363,46 +364,6 @@ class DisplayPanel extends Panel {
 
 }
 
-class CharacterMap {
-
-    static UPPERCASE_LETTERS = [
-        [ 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J' ],
-        [ 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T' ],
-        [ 'U', 'V', 'W', 'X', 'Y', 'Z' ],
-    ];
-
-    static LOWERCASE_LETTERS = [
-        [ 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j' ],
-        [ 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't' ],
-        [ 'u', 'v', 'w', 'x', 'y', 'z' ],
-    ];
-
-    static NUMBERS = [
-        [ '1', '2', '3', '4', '5', '6', '7', '8', '9', '0' ],
-    ];
-
-    static SPECIAL = [
-        [ '!', '@', '#', '$', '%', '^', '&', '*', '(', ')' ],
-        [ '-', '_', '=', '+', '?', '|', '[', ']', '{', '}' ],
-        [ ';', ':', '\'', '"', ',', '.', '<', '>', '/', '\\' ],
-        [ '`', '~', 'Σ', 'π', '©', '®', '°', '¡', '¿', '±' ],
-        [ '£', '€', '¥', '₿', '¢', '▲', '▼', '•', '●', '█' ],
-    ];
-    
-    constructor(type, value=undefined) {
-        this.type = type;
-        this.value = value;
-    }
-
-    getCharacter() {
-        return this.value;
-    }
-
-    getType() {
-        return this.type;
-    }
-}
-
 class GridPanel extends OpenablePanel {
 
     constructor(title, keycode, grid) {
@@ -425,7 +386,7 @@ class GridPanel extends OpenablePanel {
 
     getCurrentDisplayValue() {
         let currentItem = this.grid[this.currentIndex.row][this.currentIndex.col];
-        if (currentItem.key === CharacterType.DEFAULT) {
+        if (currentItem.key === CharacterMap.DEFAULT) {
             return Text.DEFAULT;
         } else {
             return this.grid[this.currentIndex.row][this.currentIndex.col].value;
@@ -647,7 +608,7 @@ class PanelManager {
 
         // Character Panel
         let characterGrid = [
-            [ new ListItem(CharacterType.DEFAULT, CharacterType.DEFAULT) ],
+            [ new ListItem(CharacterMap.DEFAULT, CharacterMap.DEFAULT) ],
             [ new EmptyItem() ],
             ...CharacterMap.UPPERCASE_LETTERS.map(row => row.map(character => new GridItem(character, character))),
             [ new EmptyItem() ],

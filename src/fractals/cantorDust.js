@@ -1,4 +1,5 @@
-const { Modes, Shapes, VerticalAlign, HorizontalAlign } = require('../constants');
+const { Modes, VerticalAlign, HorizontalAlign } = require('../constants');
+const { Shapes, LineTypes } = require('../characters.js');
 const { Utils } = require('../utils');
 
 class CantorDust {

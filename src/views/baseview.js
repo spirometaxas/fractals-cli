@@ -1,4 +1,4 @@
-const { Shapes } = require('../constants');
+const { Shapes } = require('../characters.js');
 const { Layout } = require('../dashboard');
 
 class BaseView {

@@ -1,5 +1,6 @@
 const { KochAntiSnowflake } = require('./kochAntiSnowflake');
-const { Modes, Shapes, Rotations, VerticalAlign, HorizontalAlign } = require('../constants');
+const { Modes, Rotations, VerticalAlign, HorizontalAlign } = require('../constants');
+const { Shapes } = require('../characters.js');
 const { Utils } = require('../utils');
 
 class Triflake {

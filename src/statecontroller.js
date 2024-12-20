@@ -1,5 +1,6 @@
 const { Fractal } = require('./Fractal');
-const { FractalKeys, FractalData, PanelKeys, ViewKeys, Modes, Menus, CharacterType } = require('./constants');
+const { FractalKeys, FractalData, PanelKeys, ViewKeys, Modes, Menus } = require('./constants');
+const { CharacterMap, LineTypes } = require('./characters.js');
 const { Cache } = require('./cache');
 const { Worker } = require('worker_threads');
 const path = require('path');
@@ -293,7 +294,7 @@ class StateController {
     }
 
     _onCharacterChange(newCharacter) {
-        if (newCharacter.key === CharacterType.DEFAULT) {
+        if (newCharacter.key === CharacterMap.DEFAULT) {
             this.designConfig.character = undefined;
         } else {
             this.designConfig.character = newCharacter.value;

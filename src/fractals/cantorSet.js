@@ -1,4 +1,5 @@
-const { Rotations, Modes, LineTypes, Shapes, VerticalAlign, HorizontalAlign } = require('../constants');
+const { Rotations, Modes, VerticalAlign, HorizontalAlign } = require('../constants');
+const { LineTypes, Shapes } = require('../characters.js');
 const { Utils } = require('../utils');
 
 class CantorSet {

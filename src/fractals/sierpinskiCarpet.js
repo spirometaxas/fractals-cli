@@ -1,4 +1,5 @@
-const { Modes, LineTypes, Shapes, VerticalAlign, HorizontalAlign } = require('../constants');
+const { Modes, VerticalAlign, HorizontalAlign } = require('../constants');
+const { LineTypes, Shapes } = require('../characters.js');
 const { Utils } = require('../utils');
 
 class SierpinskiCarpet {

@@ -1,4 +1,5 @@
-const { Rotations, Modes, Shapes, VerticalAlign, HorizontalAlign } = require('../constants');
+const { Rotations, Modes, VerticalAlign, HorizontalAlign } = require('../constants');
+const { Shapes } = require('../characters.js');
 const { Utils } = require('../utils');
 
 class SierpinskiTriangle {

@@ -1,7 +1,8 @@
 const { Utils } = require('./utils.js');
 const { Renderer } = require('./renderer.js');
 const { Colors } = require('./colors.js');
-const { Shapes, PanelKeys, ViewKeys, Text, Menus, CharacterType } = require('./constants.js');
+const { PanelKeys, ViewKeys, Text, Menus } = require('./constants.js');
+const { CharacterMap, Shapes } = require('./characters.js');
 const { PanelType, PanelOptionType } = require('./panels.js');
 
 class Layout {
@@ -195,7 +196,7 @@ class Dashboard {
             for (let j = 0; j < optionRow.length; j++) {
                 let option = optionRow[j];
                 if (option.type === PanelOptionType.LIST_ITEM) {
-                    this._setText(pos.x + 2, pos.y + currentYPos, option.key === CharacterType.DEFAULT ? Text.DEFAULT : option.value, Layout.PANEL_WIDTH - 4, 'center');
+                    this._setText(pos.x + 2, pos.y + currentYPos, option.key === CharacterMap.DEFAULT ? Text.DEFAULT : option.value, Layout.PANEL_WIDTH - 4, 'center');
                     if ((i + startIndex) === panel.getCurrentIndex().row) {
                         this._setTextColor(pos.x + 1, pos.y + currentYPos, Layout.PANEL_WIDTH - 2, Colors.FOCUS_GOLD, true);
                     }

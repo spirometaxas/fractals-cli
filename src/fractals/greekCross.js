@@ -1,4 +1,5 @@
-const { Modes, LineTypes, VerticalAlign, HorizontalAlign } = require('../constants');
+const { Modes, VerticalAlign, HorizontalAlign } = require('../constants');
+const { LineTypes } = require('../characters.js');
 const { Utils } = require('../utils');
 
 class GreekCross {

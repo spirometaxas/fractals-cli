@@ -1,4 +1,5 @@
-const { Rotations, Modes, LineTypes, VerticalAlign, HorizontalAlign } = require('../constants');
+const { Rotations, Modes, VerticalAlign, HorizontalAlign } = require('../constants');
+const { LineTypes } = require('../characters.js');
 const { HilbertCurve } = require('./hilbertCurve');
 const { Utils } = require('../utils');
 

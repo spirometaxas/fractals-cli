@@ -1,5 +1,6 @@
 const { KochSnowflake } = require('./kochSnowflake');
-const { Modes, Shapes, Rotations, VerticalAlign, HorizontalAlign } = require('../constants');
+const { Modes, Rotations, VerticalAlign, HorizontalAlign } = require('../constants');
+const { Shapes } = require('../characters.js');
 const { Utils } = require('../utils');
 
 class KochAntiSnowflake {

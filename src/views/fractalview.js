@@ -1,4 +1,5 @@
-const { VerticalAlign, HorizontalAlign, Lines, LineTypes } = require('../constants');
+const { VerticalAlign, HorizontalAlign } = require('../constants');
+const { Lines, LineTypes, Shapes } = require('../characters.js');
 const { Layout } = require('../dashboard');
 const { BaseView } = require('./baseview.js');
 

@@ -1,4 +1,5 @@
-const { LineTypes, VerticalAlign, HorizontalAlign } = require('../constants');
+const { VerticalAlign, HorizontalAlign, Modes } = require('../constants');
+const { LineTypes } = require('../characters.js');
 const { Utils } = require('../utils');
 
 class HTree {

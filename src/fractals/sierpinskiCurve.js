@@ -1,4 +1,5 @@
-const { Modes, Rotations, LineTypes, VerticalAlign, HorizontalAlign } = require('../constants');
+const { Modes, Rotations, VerticalAlign, HorizontalAlign } = require('../constants');
+const { LineTypes } = require('../characters.js');
 const { Utils } = require('../utils');
 
 class SierpinskiCurve {
@@ -9,7 +10,7 @@ class SierpinskiCurve {
         MODES: [ Modes.LINES ],
         MODE_OPTIONS: {
             [Modes.LINES]: {
-                LINE_TYPES: [ LineTypes.STANDARD, LineTypes.BOLD ],
+                LINE_TYPES: [ LineTypes.STANDARD, LineTypes.BOLD, LineTypes.DOUBLE ],
             },
         },
     }

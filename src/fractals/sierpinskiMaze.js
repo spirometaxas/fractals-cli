@@ -1,4 +1,5 @@
-const { Modes, Rotations, LineTypes, VerticalAlign, HorizontalAlign } = require('../constants');
+const { Modes, Rotations, VerticalAlign, HorizontalAlign } = require('../constants');
+const { LineTypes } = require('../characters.js');
 const { Utils } = require('../utils');
 
 class SierpinskiMaze {

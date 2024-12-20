@@ -1,4 +1,5 @@
-const { Shapes, Rotations, VerticalAlign, HorizontalAlign } = require('./constants');
+const { Rotations, VerticalAlign, HorizontalAlign } = require('./constants');
+const { Shapes } = require('./characters.js');
 
 class Utils {
 
