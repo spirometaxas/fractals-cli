@@ -271,7 +271,7 @@ class Dashboard {
         // Draw items
         if (panel.type === PanelType.LIST) {
             this._drawListPanel(panel, pos, height);
-        } else if (panel.type === PanelType.CHARACTER) {
+        } else if (panel.type === PanelType.GRID) {
             this._drawCharacterPanel(panel, pos, height);
         }
     }
@@ -296,29 +296,19 @@ class Dashboard {
         this._setHighlightColor(pos.x + 1, pos.y + 1, Layout.PANEL_WIDTH - 2, Colors.DARK_GRAY);
         this._setTextColor(pos.x + 1, pos.y + 1, Layout.PANEL_WIDTH - 2, Colors.WHITE, true);
 
-        if (panel.type === PanelType.LIST) {
+        if (panel.increment) {
+            this._setText(pos.x + Layout.PANEL_WIDTH - 13, pos.y + 1, '+:<' + panel.keycode.toLowerCase() + '> -:<' + panel.keycode.toUpperCase() + '>', 11, 'right');
+            this._setTextColor(pos.x + Layout.PANEL_WIDTH - 5, pos.y + 1, 3, Colors.SKY_BLUE, true);
+            this._setTextColor(pos.x + Layout.PANEL_WIDTH - 11, pos.y + 1, 3, Colors.SKY_BLUE, true);
+            this._setTextColor(pos.x + Layout.PANEL_WIDTH - 6, pos.y + 1, 1, Colors.LIGHT_GRAY, true);
+            this._setTextColor(pos.x + Layout.PANEL_WIDTH - 12, pos.y + 1, 1, Colors.LIGHT_GRAY, true);
+        } else {
             this._setText(pos.x + Layout.PANEL_WIDTH - panel.keycode.length - 4, pos.y + 1, '<' + panel.keycode.toUpperCase() + '>', panel.keycode.length + 2, 'right');
             this._setTextColor(pos.x + Layout.PANEL_WIDTH - panel.keycode.length - 4, pos.y + 1, panel.keycode.length + 2, Colors.SKY_BLUE, true);
-        } else if (panel.type === PanelType.VALUE || panel.type === PanelType.CHARACTER || panel.type === PanelType.SCROLL) {
-            if (panel.increment) {
-                this._setText(pos.x + Layout.PANEL_WIDTH - 13, pos.y + 1, '+:<' + panel.keycode.toLowerCase() + '> -:<' + panel.keycode.toUpperCase() + '>', 11, 'right');
-                this._setTextColor(pos.x + Layout.PANEL_WIDTH - 5, pos.y + 1, 3, Colors.SKY_BLUE, true);
-                this._setTextColor(pos.x + Layout.PANEL_WIDTH - 11, pos.y + 1, 3, Colors.SKY_BLUE, true);
-                this._setTextColor(pos.x + Layout.PANEL_WIDTH - 6, pos.y + 1, 1, Colors.LIGHT_GRAY, true);
-                this._setTextColor(pos.x + Layout.PANEL_WIDTH - 12, pos.y + 1, 1, Colors.LIGHT_GRAY, true);
-            } else {
-                this._setText(pos.x + Layout.PANEL_WIDTH - panel.keycode.length - 4, pos.y + 1, '<' + panel.keycode.toUpperCase() + '>', panel.keycode.length + 2, 'right');
-                this._setTextColor(pos.x + Layout.PANEL_WIDTH - panel.keycode.length - 4, pos.y + 1, panel.keycode.length + 2, Colors.SKY_BLUE, true);
-            }
         }
 
         if (panel.getCurrentDisplayValue() !== undefined) {
             let value = panel.getCurrentDisplayValue();
-            if (value === true) {
-                value = Text.ON;
-            } else if (value === false) {
-                value = Text.OFF;
-            }
             this._setText(pos.x + 2, pos.y + 2, String(value), Layout.PANEL_WIDTH - 5, 'center');
         }
 
@@ -388,7 +378,7 @@ class Dashboard {
                 let panel = this.panels[panelKey];
                 if (panel.type === PanelType.DISPLAY) {
                     currentY += this._drawDisplayPanel(panel, { x: Layout.PANEL_LEFT_BUFFER, y: currentY + 1 }, maxY);
-                } else if (panel.type === PanelType.SCROLL) {
+                } else if (panelKey === PanelKeys.SCROLL) {
                     if (this._displayScroll(scrollState)) {
                         currentY += this._drawScrollPanel(panel, scrollState, { x: Layout.PANEL_LEFT_BUFFER, y: currentY }) - 1;
                     }

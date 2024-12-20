@@ -111,6 +111,9 @@ class FractalView extends BaseView {
     }
 
     updateScrollingOnResize(showPanels) {
+        if (!this.fractal) {
+            return;
+        }
         let dimensions = this._getDimensions(showPanels);
         if (this.scrolling.y + dimensions.rows > this.fractal.length) {
             this.scrolling.y = Math.max(this.fractal.length - dimensions.rows, 0);

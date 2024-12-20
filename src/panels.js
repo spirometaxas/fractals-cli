@@ -6,8 +6,7 @@ class PanelType {
     static VALUE   = 'VALUE';
     static LIST    = 'LIST';
     static DISPLAY = 'DISPLAY';
-    static SCROLL  = 'SCROLL';
-    static CHARACTER = 'CHARACTER';
+    static GRID    = 'GRID';
 }
 
 class Panel {
@@ -283,6 +282,11 @@ class ValuePanel extends Panel {
     }
 
     getCurrentDisplayValue() {
+        if (this.value === true) {
+            return Text.ON;
+        } else if (this.value === false) {
+            return Text.OFF;
+        }
         return this.value;
     }
 
@@ -292,16 +296,7 @@ class StepValuePanel extends ValuePanel {
 
     constructor(title, keycode, getDenominator) {
         super(title, keycode, true);
-        this.value = undefined;
         this.getDenominator = getDenominator;
-    }
-
-    setValue(value) {
-        this.value = value;
-    }
-
-    getValue() {
-        return this.value;
     }
 
     getCurrentDisplayValue() {
@@ -314,16 +309,6 @@ class ScrollPanel extends ValuePanel {
 
     constructor(title, keycode) {
         super(title, keycode);
-        this.value = undefined;
-        this.type = PanelType.SCROLL;
-    }
-
-    setValue(scrollState) {
-        this.value = scrollState;
-    }
-
-    getValue() {
-        return this.value;
     }
 
     getCurrentDisplayValue() {
@@ -367,7 +352,7 @@ class DisplayPanel extends Panel {
 class GridPanel extends OpenablePanel {
 
     constructor(title, keycode, grid) {
-        super(title, keycode, PanelType.CHARACTER);
+        super(title, keycode, PanelType.GRID);
         this.grid = grid;
         this.currentIndex = { row: 0, col: 0 };
         while (!this.grid[this.currentIndex.row][0].selectable) {
@@ -385,12 +370,7 @@ class GridPanel extends OpenablePanel {
     }
 
     getCurrentDisplayValue() {
-        let currentItem = this.grid[this.currentIndex.row][this.currentIndex.col];
-        if (currentItem.key === CharacterMap.DEFAULT) {
-            return Text.DEFAULT;
-        } else {
-            return this.grid[this.currentIndex.row][this.currentIndex.col].value;
-        }
+        return this.grid[this.currentIndex.row][this.currentIndex.col].value;
     }
 
     getCurrentKey() {
@@ -515,6 +495,19 @@ class GridPanel extends OpenablePanel {
 
 }
 
+class CharacterPanel extends GridPanel {
+
+    getCurrentDisplayValue() {
+        let currentItem = this.grid[this.currentIndex.row][this.currentIndex.col];
+        if (currentItem.key === CharacterMap.DEFAULT) {
+            return Text.DEFAULT;
+        } else {
+            return this.grid[this.currentIndex.row][this.currentIndex.col].value;
+        }
+    }
+
+}
+
 class PanelManager {
 
     static initPanels() {
@@ -618,7 +611,7 @@ class PanelManager {
             [ new EmptyItem() ],
             ...CharacterMap.SPECIAL.map(row => row.map(character => new GridItem(character, character))),
         ];
-        let characterPanel = new GridPanel(Text.CHARACTER, 'k', characterGrid);
+        let characterPanel = new CharacterPanel(Text.CHARACTER, 'k', characterGrid);
         panelMap[PanelKeys.CHARACTER] = characterPanel;
 
         return panelMap;
