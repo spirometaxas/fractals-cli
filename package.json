@@ -2,9 +2,6 @@
   "name": "fractals-cli",
   "version": "0.0.1",
   "description": "An interactive fractal viewing app for the console!",
-  "bin": {
-    "fractals-cli": "./src/cli.js"
-  },
   "files": [
     "src"
   ],
@@ -13,10 +10,6 @@
     "url": "https://github.com/spirometaxas/fractals-cli.git"
   },
   "homepage": "https://spirometaxas.com/projects/fractals-cli",
-  "scripts": {
-    "cli": "node ./src/cli.js",
-    "test": "jest"
-  },
   "author": {
     "name": "Spiro Metaxas",
     "url": "https://spirometaxas.com"
